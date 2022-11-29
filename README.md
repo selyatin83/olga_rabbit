@@ -7,7 +7,7 @@
 </p>
 <p align="center">
 <img src="https://img.shields.io/badge/php-%5E8.1.0-blue">
-<img src="https://img.shields.io/badge/mysql-latest-orange">
+<img src="https://img.shields.io/badge/mysql-~8.0.31-orange">
 <img src="https://img.shields.io/badge/yii2-~2.0.45-green">
 <img src="https://img.shields.io/badge/phpunit-~9.5.0-blue">
 
@@ -68,7 +68,7 @@ We work on this project with docker-compose.
 
 **Images**:
 * yiisoftware/yii2-php:8.1-apache
-* mysql:latest
+* mysql:8.0.31
 
 You can then access the application locally through the following URL:
 
