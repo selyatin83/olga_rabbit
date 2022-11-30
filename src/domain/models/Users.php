@@ -8,6 +8,7 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use omarinina\domain\models\ads\Ads;
 use omarinina\domain\models\ads\Comments;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "users".
@@ -23,7 +24,7 @@ use omarinina\domain\models\ads\Comments;
  * @property Ads[] $ads
  * @property Comments[] $comments
  */
-class Users extends ActiveRecord
+class Users extends ActiveRecord implements IdentityInterface
 {
     /**
      * {@inheritdoc}
@@ -62,6 +63,28 @@ class Users extends ActiveRecord
             'avatarSrc' => 'Avatar Src',
             'vkId' => 'Vk ID',
         ];
+    }
+
+    public static function findIdentity($id)
+    {
+        return self::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+    }
+
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    public function getAuthKey()
+    {
+    }
+
+    public function validateAuthKey($authKey)
+    {
     }
 
     /**

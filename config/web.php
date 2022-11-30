@@ -20,7 +20,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'omarinina\models\Users',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
