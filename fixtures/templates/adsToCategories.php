@@ -5,7 +5,7 @@
  * @var $index integer
  */
 return [
-    'adId' => $faker->randomNumber(50, true),
-    'categoryId' => $faker->randomNumber(6, true),
+    'adId' => $faker->numberBetween(1, 50),
+    'categoryId' => $faker->numberBetween(1, 6),
 ];
 

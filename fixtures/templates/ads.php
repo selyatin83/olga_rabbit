@@ -12,8 +12,8 @@ return [
         '/img/avatar03.jpg',
         '/img/avatar04.jpg',
     ]),
-    'typeId' => $faker->randomNumber(2, true),
+    'typeId' => $faker->numberBetween(1, 2),
     'description' => $faker->realTextBetween(50, 1000),
-    'author' => $faker->randomNumber(10, true),
+    'author' => $faker->numberBetween(1, 10),
     'email' => $faker->email()
 ];
