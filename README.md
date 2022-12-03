@@ -119,6 +119,10 @@ docker-compose run --rm php yii fixture/load Example
 ```
 
 **The sequence**:
+1. Users
+2. Ads
+3. AdsToCategories
+4. Comments
 
 If you want to generate your personal data then use our templates in `app/fixtures/templates` but you should keep *these rules*:
 1. absolutely follow the sequence above
