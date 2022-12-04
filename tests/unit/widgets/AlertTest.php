@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\unit\widgets;
+namespace unit\widgets;
 
 use app\widgets\Alert;
 use Yii;
