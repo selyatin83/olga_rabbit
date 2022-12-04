@@ -1,12 +1,12 @@
 <?php
 
-namespace omarinina\infrastructure\models;
+namespace omarinina\infrastructure\models\forms;
 
+use omarinina\domain\models\Users;
 use yii\base\Model;
 use yii\web\UploadedFile;
-use omarinina\domain\models\Users;
 
-class RegistrationFrom extends Model
+class RegistrationForm extends Model
 {
     /** @var string  */
     public string $name = '';
