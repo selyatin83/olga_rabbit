@@ -29,7 +29,7 @@ class UserTest extends \Codeception\Test\Unit
     }
 
     // tests
-    public function testRegistrationNewUser(): void
+    public function testCreateNewUser(): void
     {
         $registrationDto = Mockery::mock('RegistrationDto');
         $registrationDto->shouldReceive('name', 'lastName', 'email', 'password', 'avatarSrc')
