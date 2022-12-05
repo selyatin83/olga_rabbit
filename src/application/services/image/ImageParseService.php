@@ -12,17 +12,8 @@ use Yii;
 
 class ImageParseService implements ImageParseInterface
 {
-    /**
-     * @param UploadedFile|null $avatar
-     * @return string
-     * @throws NotFoundHttpException
-     */
-    public function parseAvatar(?UploadedFile $avatar): string
+    public function parseAvatar(UploadedFile $avatar): string
     {
-        if (!$avatar) {
-            throw new NotFoundHttpException('Avatar is not found');
-        }
-
         $name = uniqid('upload', true) . '.' . $avatar->getExtension();
         $uploadPath = Yii::getAlias('@webroot') . PathConstants::PATH_AVATAR;
 

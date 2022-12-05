@@ -10,6 +10,7 @@ use omarinina\application\services\image\interfaces\ImageParseInterface;
 use omarinina\domain\models\Users;
 use Yii;
 use yii\base\Exception;
+use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
@@ -24,6 +25,9 @@ class UserFactory implements UserFactoryInterface
     public function createNewUser(NewUserDto $dto): Users
     {
         $avatar = UploadedFile::getInstance($dto->form, 'avatar');
+        if (!$avatar) {
+            throw new NotFoundHttpException('Image is not found');
+        }
         $imageParse = Yii::$container->get(ImageParseInterface::class);
         $avatarSrc = $imageParse->parseAvatar($avatar);
 
