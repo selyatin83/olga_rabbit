@@ -32,23 +32,15 @@ use yii\widgets\ActiveForm;
         <div class="sign-up__avatar-container js-preview-container">
             <div class="sign-up__avatar js-preview"></div>
             <div class="sign-up__field-avatar">
+                <?= $form->field($model, 'avatar', ['template' => '{input}'])
+                    ->fileInput([
+                        'class' => 'visually-hidden js-file-field',
+                        'id' => 'avatar',
+                    ])
+                ?>
                 <label for="avatar">
-                    <?= $form->field($model, 'avatar', [
-                        'template' => "<span class=\"sign-up__text-upload\">Загрузить аватар…{input}",
-                        'inputOptions' => [
-                            'style' => 'display: none',
-                            'hidden' => true,
-                            'class' => 'visually-hidden js-file-field'
-                        ],
-                    ])->hiddenInput(['id' => 'registration-form']) ?>
-                    <?= $form->field($model, 'avatar', [
-                        'template' => "<label class=\"sign-up__text-another\">Загрузить другой аватар…{input}",
-                        'inputOptions' => [
-                            'style' => 'display: none',
-                            'hidden' => true,
-                            'class' => 'visually-hidden js-file-field'
-                        ],
-                    ])->hiddenInput(['id' => 'registration-form']) ?>
+                    <span class="sign-up__text-upload">Загрузить аватар…</span>
+                    <span class="sign-up__text-another">Загрузить другой аватар…</span>
                 </label>
             </div>
         </div>
@@ -57,7 +49,7 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'email', ['options' => ['class' => 'form__field sign-up__field']])->textInput() ?>
         <?= $form->field($model, 'password', ['options' => ['class' => 'form__field sign-up__field']])
             ->passwordInput() ?>
-        <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'half-wrapper form-group']])
+        <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'form__field sign-up__field']])
             ->passwordInput() ?>
 
         <?php
