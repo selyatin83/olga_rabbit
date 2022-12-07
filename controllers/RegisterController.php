@@ -37,7 +37,7 @@ class RegisterController extends Controller
 
             if ($registrationForm->validate()) {
                 $this->userFactory->createNewUser(new NewUserDto($registrationForm));
-                return $this->redirect(['site/index']);
+                return $this->goHome();
             }
         }
 

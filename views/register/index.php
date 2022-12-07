@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
             'fieldConfig' => [
                 'template' => "{label}\n{input}\n{error}",
                 'inputOptions' => ['class' => 'js-field'],
-                'errorOptions' => ['tag' => 'span', 'class' => 'error-summary', 'style' => 'display: flex']
+                'errorOptions' => ['tag' => 'span', 'class' => 'error__list', 'style' => 'display: flex']
             ]
         ])
         ?>
