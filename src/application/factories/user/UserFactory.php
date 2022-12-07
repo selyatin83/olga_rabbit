@@ -24,12 +24,8 @@ class UserFactory implements UserFactoryInterface
      */
     public function createNewUser(NewUserDto $dto): Users
     {
-        $avatar = UploadedFile::getInstance($dto->form, 'avatar');
-        if (!$avatar) {
-            throw new NotFoundHttpException('Image is not found');
-        }
         $imageParse = Yii::$container->get(ImageParseInterface::class);
-        $avatarSrc = $imageParse->parseAvatar($avatar);
+        $avatarSrc = $imageParse->parseAvatar($dto->form->avatar);
 
         $newUser = new Users();
         $newUser->attributes = $dto->form->getAttributes();

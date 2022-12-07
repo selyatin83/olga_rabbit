@@ -14,14 +14,14 @@ use yii\widgets\ActiveForm;
 <section class="sign-up">
     <h1 class="visually-hidden">Регистрация</h1>
         <?php $form = ActiveForm::begin([
-            'id' => 'registration-form',
+            'id' => 'RegistrationForm',
             'options' => [
                 'class' => 'sign-up__form form'
             ],
             'fieldConfig' => [
                 'template' => "{label}\n{input}\n{error}",
                 'inputOptions' => ['class' => 'js-field'],
-                'errorOptions' => ['tag' => 'span']
+                'errorOptions' => ['tag' => 'span', 'class' => 'error-summary', 'style' => 'display: flex']
             ]
         ])
         ?>
@@ -32,10 +32,10 @@ use yii\widgets\ActiveForm;
         <div class="sign-up__avatar-container js-preview-container">
             <div class="sign-up__avatar js-preview"></div>
             <div class="sign-up__field-avatar">
-                <?= $form->field($model, 'avatar', ['template' => '{input}'])
+                <?=$form->field($model, 'avatar', ['template' => "{input}\n{error}"])
                     ->fileInput([
                         'class' => 'visually-hidden js-file-field',
-                        'id' => 'avatar',
+                        'id' => 'avatar'
                     ])
                 ?>
                 <label for="avatar">
@@ -44,13 +44,26 @@ use yii\widgets\ActiveForm;
                 </label>
             </div>
         </div>
-        <?= $form->field($model, 'name', ['options' => ['class' => 'form__field sign-up__field']])->textInput() ?>
-        <?= $form->field($model, 'lastName', ['options' => ['class' => 'form__field sign-up__field']])->textInput() ?>
-        <?= $form->field($model, 'email', ['options' => ['class' => 'form__field sign-up__field']])->textInput() ?>
-        <?= $form->field($model, 'password', ['options' => ['class' => 'form__field sign-up__field']])
-            ->passwordInput() ?>
-        <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'form__field sign-up__field']])
-            ->passwordInput() ?>
+        <?= $form->field($model, 'name', [
+                'options' => [
+                        'class' => 'form__field sign-up__field'
+                ]])->textInput() ?>
+        <?= $form->field($model, 'lastName', [
+                'options' => [
+                        'class' => 'form__field sign-up__field'
+                ]])->textInput() ?>
+        <?= $form->field($model, 'email', [
+                'options' => [
+                        'class' => 'form__field sign-up__field'
+                ]])->textInput() ?>
+        <?= $form->field($model, 'password', [
+                'options' => [
+                        'class' => 'form__field sign-up__field'
+                ]])->passwordInput() ?>
+        <?= $form->field($model, 'repeatedPassword', [
+                'options' => [
+                        'class' => 'form__field sign-up__field'
+                ]])->passwordInput() ?>
 
         <?php
             echo Html::submitButton('Создать аккаунт', ['class' => 'sign-up__button btn btn--medium js-button']);

@@ -23,20 +23,19 @@ class RegistrationForm extends Model
     /** @var string  */
     public string $repeatedPassword = '';
 
-    /** @var UploadedFile|null  */
-    public ?UploadedFile $avatar = null;
+    /** @var UploadedFile  */
+    public $avatar;
 
     public function rules(): array
     {
         return [
             [['name', 'lastName', 'email', 'password', 'repeatedPassword', 'avatar'], 'required'],
-            [['name', 'lastName'], 'string'],
             [['name', 'lastName'], 'match', 'pattern' => '/^[A-Za-zА-Яа-яЁё]{2,50}$/i'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => Users::class, 'message' => 'Пользователь с таким e-mail уже существует'],
             ['password', 'string', 'min' => 6],
             ['repeatedPassword', 'compare', 'compareAttribute' => 'password'],
-            ['avatar', 'file', 'extensions' => 'png, jpg', 'maxSize' => 5 * 1024 * 1024],
+            ['avatar', 'image', 'extensions' => 'png, jpg', 'maxSize' => 5 * 1024 * 1024],
         ];
     }
     public function attributeLabels(): array

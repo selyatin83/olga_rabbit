@@ -10,6 +10,7 @@ use omarinina\infrastructure\models\forms\RegistrationForm;
 use yii\web\Controller;
 use Yii;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 class RegisterController extends Controller
 {
@@ -32,10 +33,11 @@ class RegisterController extends Controller
 
         if (Yii::$app->request->getIsPost()) {
             $registrationForm->load(Yii::$app->request->post());
+            $registrationForm->avatar = UploadedFile::getInstance($registrationForm, 'avatar');
 
             if ($registrationForm->validate()) {
                 $this->userFactory->createNewUser(new NewUserDto($registrationForm));
-                return $this->redirect(['site/login']);
+                return $this->redirect(['site/index']);
             }
         }
 
