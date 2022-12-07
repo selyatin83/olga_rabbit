@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace unit;
 
 use Mockery;
+use omarinina\application\factories\user\dto\NewUserDto;
+use omarinina\application\factories\user\UserFactory;
+use omarinina\application\services\image\interfaces\ImageParseInterface;
 use omarinina\domain\models\Users;
+use omarinina\infrastructure\models\forms\RegistrationForm;
+use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 class UserTest extends \Codeception\Test\Unit
 {
@@ -31,18 +37,21 @@ class UserTest extends \Codeception\Test\Unit
     // tests
     public function testCreateNewUser(): void
     {
-        $registrationDto = Mockery::mock('RegistrationDto');
-        $registrationDto->shouldReceive('name', 'lastName', 'email', 'password', 'avatarSrc')
+        $form = new RegistrationForm();
+        $form->name = 'Mile';
+        $form->lastName = 'Doe';
+        $form->email = 'M.doe@google.com';
+        $form->password = '123456';
+        $form->avatar = $this->make(UploadedFile::class);
+        $dto = new NewUserDto($form);
+        $imageParse = Yii::$container->get(ImageParseInterface::class);
+        Mockery::mock($imageParse)
+            ->shouldReceive('parseAvatar')
+            ->with($dto->form->avatar)
             ->once()
-            ->andReturn(
-                'Mile',
-                'Doe',
-                'M.doe@google.com',
-                '123456',
-                '/img/avatar01.jpg'
-            );
+            ->andReturn('/uploads/avatars/upload639002f3191f72.13517754.png');
 
-        $newUser = (new UserCreateService())->createNewUser($registrationDto);
+        $newUser = (new UserFactory())->createNewUser($dto);
         $this->assertEquals('Mile', $newUser->name);
         $this->assertEquals('m.doe@google.com', $newUser->email);
     }
