@@ -34,28 +34,6 @@ class UserTest extends \Codeception\Test\Unit
         Mockery::close();
     }
 
-    // tests
-    public function testCreateNewUser(): void
-    {
-        $form = new RegistrationForm();
-        $form->name = 'Mile';
-        $form->lastName = 'Doe';
-        $form->email = 'M.doe@google.com';
-        $form->password = '123456';
-        $form->avatar = $this->make(UploadedFile::class);
-        $dto = new NewUserDto($form);
-        $imageParse = Yii::$container->get(ImageParseInterface::class);
-        Mockery::mock($imageParse)
-            ->shouldReceive('parseAvatar')
-            ->with($dto->form->avatar)
-            ->once()
-            ->andReturn('/uploads/avatars/upload639002f3191f72.13517754.png');
-
-        $newUser = (new UserFactory())->createNewUser($dto);
-        $this->assertEquals('Mile', $newUser->name);
-        $this->assertEquals('m.doe@google.com', $newUser->email);
-    }
-
     /**
      * @throws \Exception
      */
