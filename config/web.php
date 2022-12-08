@@ -1,12 +1,21 @@
 <?php
 
+use yii\debug\panels\DbPanel;
+use yii\debug\Module;
+use yii\log\FileTarget;
+use yii\caching\FileCache;
+use omarinina\infrastructure\modules\Bootstrap;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        Bootstrap::class
+    ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -17,10 +26,10 @@ $config = [
             'cookieValidationKey' => 'Y8_s8-6VrhNYFHLcQHigCwvITCMZUteq',
         ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => FileCache::class,
         ],
         'user' => [
-            'identityClass' => 'omarinina\models\Users',
+            'identityClass' => \omarinina\domain\models\Users::class,
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -36,7 +45,7 @@ $config = [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
+                    'class' => FileTarget::class,
                     'levels' => ['error', 'warning'],
                 ],
             ],
@@ -56,10 +65,10 @@ if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
-        'class' => 'yii\debug\Module',
+        'class' => Module::class,
         'panels' => [
             'db' => [
-                'class' => 'yii\debug\panels\DbPanel',
+                'class' => DbPanel::class,
                 'defaultOrder' => [
                     'seq' => SORT_ASC
                 ],
@@ -75,7 +84,7 @@ if (YII_ENV_DEV) {
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
-        'class' => 'yii\gii\Module',
+        'class' => \yii\gii\Module::class,
         // uncomment the following to add your IP if you are not connecting from localhost.
         'allowedIPs' => ['*'],
     ];

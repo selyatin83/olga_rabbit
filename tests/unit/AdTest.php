@@ -95,18 +95,16 @@ class AdTest extends \Codeception\Test\Unit
                 'example@mail.ru',
             );
 
-        $categories = Mockery::mock('CreateAdForm');
-        $categories->shouldReceive('categories')
-            ->once()
-            ->andReturn([1, 3, 6]);
+        $categories = $this->make(CreateAdForm::class, ['categories' => [1, 3, 6,]]);
+//        $categories = Mockery::mock('CreateAdForm');
+//        $categories->shouldReceive('categories')
+//            ->once()
+//            ->andReturn([1, 3, 6]);
 
         $newAd = (new AdCreateService())->createNewAd($adDto, $categories);
 
         $this->assertEquals('Really big bed', $newAd->name);
-        Verify::Array($newAd->getAdCategories())
-            ->contains(1)
-            ->contains(3)
-            ->сontains(6);
+        $this->assertEquals($categories, $newAd->adsCategories);
     }
 
     /**

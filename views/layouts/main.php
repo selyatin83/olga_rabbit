@@ -57,7 +57,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             <img src="/img/avatar.jpg" srcset="/img/avatar@2x.jpg 2x" alt="Аватар пользователя">
         </a>
         <?php
-        echo Html::a('Вход и регистрация', '/html/sign-up.html', ['class'=>'header__input']);
+        echo Html::a('Вход и регистрация', 'register/index', ['class'=>'header__input']);
         ?>
     </div>
 

@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace unit;
 
 use Mockery;
+use omarinina\application\factories\user\dto\NewUserDto;
+use omarinina\application\factories\user\UserFactory;
+use omarinina\application\services\image\interfaces\ImageParseInterface;
 use omarinina\domain\models\Users;
+use omarinina\infrastructure\models\forms\RegistrationForm;
+use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 class UserTest extends \Codeception\Test\Unit
 {
@@ -26,25 +32,6 @@ class UserTest extends \Codeception\Test\Unit
     public function tearDown(): void
     {
         Mockery::close();
-    }
-
-    // tests
-    public function testCreateNewUser(): void
-    {
-        $registrationDto = Mockery::mock('RegistrationDto');
-        $registrationDto->shouldReceive('name', 'lastName', 'email', 'password', 'avatarSrc')
-            ->once()
-            ->andReturn(
-                'Mile',
-                'Doe',
-                'M.doe@google.com',
-                '123456',
-                '/img/avatar01.jpg'
-            );
-
-        $newUser = (new UserCreateService())->createNewUser($registrationDto);
-        $this->assertEquals('Mile', $newUser->name);
-        $this->assertEquals('m.doe@google.com', $newUser->email);
     }
 
     /**
