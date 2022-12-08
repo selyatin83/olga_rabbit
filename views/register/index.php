@@ -5,6 +5,7 @@ declare(strict_types=1);
 use omarinina\infrastructure\models\forms\RegistrationForm;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var RegistrationForm $model */
@@ -14,7 +15,7 @@ use yii\widgets\ActiveForm;
 <section class="sign-up">
     <h1 class="visually-hidden">Регистрация</h1>
         <?php $form = ActiveForm::begin([
-            'id' => 'RegistrationForm',
+            'id' => RegistrationForm::class,
             'options' => [
                 'class' => 'sign-up__form form'
             ],
@@ -27,7 +28,7 @@ use yii\widgets\ActiveForm;
         ?>
         <div class="sign-up__title">
             <h2>Регистрация</h2>
-            <?php echo Html::a('Вход', 'login.html', ['class'=>'sign-up__link']) ?>
+            <?php echo Html::a('Вход', Url::to(['login/index']), ['class'=>'sign-up__link']) ?>
         </div>
         <div class="sign-up__avatar-container js-preview-container">
             <div class="sign-up__avatar js-preview"></div>
