@@ -8,5 +8,5 @@ use yii\web\UploadedFile;
 
 interface ImageParseInterface
 {
-    public function parseAvatar(UploadedFile $avatar): string;
+    public function parseImage(UploadedFile $image, bool $isAvatar): string;
 }

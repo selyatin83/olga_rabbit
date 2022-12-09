@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace omarinina\application\services\image;
 
 use omarinina\application\services\image\interfaces\ImageParseInterface;
-use omarinina\infrastructure\constants\PathConstants;
-use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use Yii;
 
 class ImageParseService implements ImageParseInterface
 {
-    public function parseAvatar(UploadedFile $avatar): string
+    public function parseImage(UploadedFile $image, bool $isAvatar): string
     {
-        $name = uniqid('upload', true) . '.' . $avatar->getExtension();
-        $uploadPath = Yii::getAlias('@webroot') . PathConstants::PATH_AVATAR;
+        $name = uniqid('upload', true) . '.' . $image->getExtension();
 
-        if (!file_exists($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
+        $uploadPartPath = $isAvatar ? Yii::$app->params['pathAvatar'] : Yii::$app->params['pathImage'];
+        $uploadFullPath = Yii::getAlias('@webroot') . $uploadPartPath;
+
+
+        if (!file_exists($uploadFullPath)) {
+            mkdir($uploadFullPath, 0777, true);
         }
 
-        $avatar->saveAs('@webroot' . PathConstants::PATH_AVATAR . $name);
+        $image->saveAs('@webroot' . $uploadPartPath . $name);
 
-        return PathConstants::PATH_AVATAR . $name;
+        return $uploadPartPath . $name;
     }
 }

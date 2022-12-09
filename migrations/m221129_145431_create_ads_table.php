@@ -15,11 +15,11 @@ class m221129_145431_create_ads_table extends Migration
         $this->createTable('{{%ads}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(255)->notNull(),
-            'imageSrc' => $this->text()->notNull(),
             'typeId' => $this->integer()->notNull(),
             'description' => $this->text()->notNull(),
             'author' => $this->integer()->notNull(),
             'email' => $this->string(50)->notNull(),
+            'price' => $this->integer()->notNull(),
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull()
         ]);

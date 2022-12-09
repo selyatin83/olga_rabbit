@@ -25,7 +25,7 @@ class UserFactory implements UserFactoryInterface
     public function createNewUser(NewUserDto $dto): Users
     {
         $imageParse = Yii::$container->get(ImageParseInterface::class);
-        $avatarSrc = $imageParse->parseAvatar($dto->form->avatar);
+        $avatarSrc = $imageParse->parseImage($dto->form->avatar, true);
 
         $newUser = new Users();
         $newUser->attributes = $dto->form->getAttributes();

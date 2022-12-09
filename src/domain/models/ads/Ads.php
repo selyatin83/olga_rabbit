@@ -14,18 +14,19 @@ use omarinina\domain\models\Users;
  *
  * @property int $id
  * @property string $name
- * @property string $imageSrc
  * @property int $typeId
  * @property string $description
  * @property int $author
  * @property string $email
  * @property string $createAt
+ * @property int $price
  *
  * @property AdsToCategories[] $adsToCategories
  * @property Users $authorUser
  * @property Comments[] $comments
  * @property AdTypes $type
  * @property AdCategories[] $adCategories
+ * @property Images[] $images
  */
 class Ads extends ActiveRecord
 {
@@ -43,12 +44,13 @@ class Ads extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['name', 'imageSrc', 'typeId', 'description', 'author', 'email'], 'required'],
-            [['imageSrc', 'description'], 'string'],
+            [['name', 'typeId', 'description', 'author', 'email', 'price'], 'required'],
+            [['description'], 'string'],
             [['typeId', 'author'], 'integer'],
             [['createAt'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['email'], 'string', 'max' => 50],
+            [['price'], 'integer', 'min' => 100],
             [['author'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['author' => 'id']],
             [['typeId'], 'exist', 'skipOnError' => true, 'targetClass' => AdTypes::class, 'targetAttribute' => ['typeId' => 'id']],
         ];
@@ -121,5 +123,17 @@ class Ads extends ActiveRecord
     {
         return $this->hasMany(AdCategories::class, ['id' => 'categoryId'])
             ->viaTable('adsToCategories', ['adId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Images]].
+     *
+     * @return ActiveQuery
+     * @throws InvalidConfigException
+     */
+    public function getImages(): ActiveQuery
+    {
+        return $this->hasMany(Images::class, ['id' => 'imageId'])
+            ->viaTable('adsToImages', ['adId' => 'id']);
     }
 }

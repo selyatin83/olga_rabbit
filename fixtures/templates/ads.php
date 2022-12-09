@@ -6,14 +6,9 @@
  */
 return [
     'name' => $faker->name(),
-    'imageSrc' => $faker->randomElement([
-        '/img/avatar01.jpg',
-        '/img/avatar02.jpg',
-        '/img/avatar03.jpg',
-        '/img/avatar04.jpg',
-    ]),
     'typeId' => $faker->numberBetween(1, 2),
     'description' => $faker->realTextBetween(50, 1000),
     'author' => $faker->numberBetween(1, 10),
-    'email' => $faker->email()
+    'email' => $faker->email(),
+    'price' => $faker->numberBetween(100, 100000),
 ];

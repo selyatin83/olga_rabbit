@@ -81,32 +81,6 @@ class AdTest extends \Codeception\Test\Unit
         $this->assertEquals('2022-11-30 15:55:27', array_pop($allNewAds)['createAt']);
     }
 
-    public function testCreateNewAd(): void
-    {
-        $adDto = Mockery::mock('AdDto');
-        $adDto->shouldReceive('name', 'imageSrc', 'typeId', 'description', 'author', 'email')
-            ->once()
-            ->andReturn(
-                'Really big bed',
-                '/img/blank.jpg',
-                1,
-                'Something what descriptions this product as something interesting and important',
-                1,
-                'example@mail.ru',
-            );
-
-        $categories = $this->make(CreateAdForm::class, ['categories' => [1, 3, 6,]]);
-//        $categories = Mockery::mock('CreateAdForm');
-//        $categories->shouldReceive('categories')
-//            ->once()
-//            ->andReturn([1, 3, 6]);
-
-        $newAd = (new AdCreateService())->createNewAd($adDto, $categories);
-
-        $this->assertEquals('Really big bed', $newAd->name);
-        $this->assertEquals($categories, $newAd->adsCategories);
-    }
-
     /**
      * @throws \Exception
      */
