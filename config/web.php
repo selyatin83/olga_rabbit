@@ -16,6 +16,7 @@ $config = [
         'log',
         Bootstrap::class
     ],
+    'homeUrl' => ['/'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',

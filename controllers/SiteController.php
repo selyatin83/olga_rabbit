@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use omarinina\domain\models\ads\Ads;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -61,7 +62,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $ads = Ads::find()->orderBy('createAt DESC')->limit(8)->all();
+        return $this->render('index', [
+            'ads' => $ads
+        ]);
     }
 
     /**
