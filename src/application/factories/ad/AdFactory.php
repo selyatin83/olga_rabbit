@@ -22,6 +22,7 @@ class AdFactory implements AdFactoryInterface
      * @throws ServerErrorHttpException
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\di\NotInstantiableException
+     * @throws \Throwable
      */
     public function createNewAd(NewAdDto $dto): Ads
     {
@@ -30,10 +31,18 @@ class AdFactory implements AdFactoryInterface
         $adCategoriesAdd = Yii::$container->get(AdCategoriesAddInterface::class);
         $adImagesAdd = Yii::$container->get(AdImageAddInterface::class);
 
-        foreach ($dto->form->images as $image) {
-            $imageSrc = $imageParse->parseImage($image, false);
-            $images[] = $imageSave->saveNewImage($imageSrc);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            foreach ($dto->form->images as $image) {
+                $imageSrc = $imageParse->parseImage($image, false);
+                $images[] = $imageSave->saveNewImage($imageSrc);
+            }
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
         }
+
 
         $newAd = new Ads();
         $newAd->attributes = $dto->form->getAttributes();
