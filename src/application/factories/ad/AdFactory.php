@@ -9,9 +9,10 @@ use omarinina\application\services\image\interfaces\AdImageAddInterface;
 use omarinina\application\services\image\interfaces\ImageParseInterface;
 use omarinina\application\services\image\interfaces\ImageSaveInterface;
 use omarinina\domain\models\ads\Ads;
-use omarinina\domain\models\ads\Images;
-use omarinina\domain\models\Users;
+use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
+use yii\di\NotInstantiableException;
 use yii\web\ServerErrorHttpException;
 
 class AdFactory implements AdFactoryInterface
@@ -20,9 +21,9 @@ class AdFactory implements AdFactoryInterface
      * @param NewAdDto $dto
      * @return Ads
      * @throws ServerErrorHttpException
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\di\NotInstantiableException
-     * @throws \Throwable
+     * @throws InvalidConfigException
+     * @throws NotInstantiableException
+     * @throws Throwable
      */
     public function createNewAd(NewAdDto $dto): Ads
     {
@@ -32,42 +33,33 @@ class AdFactory implements AdFactoryInterface
         $adImagesAdd = Yii::$container->get(AdImageAddInterface::class);
 
         $transaction = Yii::$app->db->beginTransaction();
+        if (!$transaction) {
+            throw new ServerErrorHttpException(
+                'Service is not available, please, try later',
+                500
+            );
+        }
+
         try {
+            $newAd = new Ads();
+            $newAd->attributes = $dto->form->getAttributes();
+            $newAd->email = mb_strtolower($dto->form->email);
+            $newAd->author = $dto->author;
+            $newAd->save(false);
+
+            $images = [];
             foreach ($dto->form->images as $image) {
                 $imageSrc = $imageParse->parseImage($image, false);
                 $images[] = $imageSave->saveNewImage($imageSrc);
             }
+            $adImagesAdd->addAdImages($images, $newAd->id);
+
+            $adCategoriesAdd->addAdCategories($dto->form->categories, $newAd->id);
+
             $transaction->commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $transaction->rollBack();
             throw $e;
-        }
-
-
-        $newAd = new Ads();
-        $newAd->attributes = $dto->form->getAttributes();
-        $newAd->email = mb_strtolower($dto->form->email);
-        $newAd->author = $dto->author;
-
-        if (!$newAd->save(false)) {
-            throw new ServerErrorHttpException(
-                'Your data has not been recorded, please try again later',
-                500
-            );
-        }
-
-        if (!$adCategoriesAdd->addAdCategories($dto->form->categories, $newAd->id)) {
-            throw new ServerErrorHttpException(
-                'Your data has not been recorded, please try again later',
-                500
-            );
-        }
-
-        if (!$adImagesAdd->addAdImages($images, $newAd->id)) {
-            throw new ServerErrorHttpException(
-                'Your data has not been recorded, please try again later',
-                500
-            );
         }
 
         return $newAd;
