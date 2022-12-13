@@ -69,7 +69,7 @@ use yii\widgets\ActiveForm;
                                 'rows' => 10
                             ]])->textarea() ?>
                     </div>
-                    <?= $model->getErrors('categories')[0] . PHP_EOL ?>
+                    <?= $model->getErrors('categories')[0] ?? null ?>
                     <?= $form->field($model, 'categories', [
                             'options' => ['class' => 'ticket-form__row'],
                             'template' => "{input}"
@@ -103,7 +103,7 @@ use yii\widgets\ActiveForm;
                             ])
                         ?>
                         </div>
-                        <?= $model->getErrors('typeId')[0] . PHP_EOL ?>
+                        <?= $model->getErrors('typeId')[0] ?? null ?>
                     </div>
 
 

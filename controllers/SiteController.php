@@ -62,9 +62,18 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $ads = Ads::find()->orderBy('createAt DESC')->limit(8)->all();
+        $newAds = Ads::find()->orderBy('createAt DESC')->limit(8)->all();
+        $popularAds = Ads::find()
+            ->joinWith(['comments'])
+            ->select(['ads.*', 'COUNT(comments.id) AS commentsCount'])
+            ->groupBy(['ads.id'])
+            ->orderBy(['commentsCount' => SORT_DESC])
+            ->limit(8)
+            ->all();
+
         return $this->render('index', [
-            'ads' => $ads
+            'newAds' => $newAds,
+            'popularAds' => $popularAds
         ]);
     }
 

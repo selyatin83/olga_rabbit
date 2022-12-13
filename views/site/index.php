@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 /** @var yii\web\View $this */
-/** @var Ads[] $ads */
+/** @var Ads[] $newAds */
+/** @var Ads[] $popularAds */
 
 use app\widgets\AdWidget;
 use omarinina\domain\models\ads\Ads;
@@ -11,7 +12,7 @@ use omarinina\domain\models\ads\Ads;
 $this->title = 'Куплю Продам';
 ?>
 
-<?php if (!Ads::find()): ?>
+<?php if (!$newAds): ?>
 <div class="message">
     <div class="message__text">
         <p>На сайте еще не опубликовано ни&nbsp;одного объявления.</p>
@@ -79,7 +80,7 @@ $this->title = 'Куплю Продам';
             <p class="tickets-list__title">Самое свежее</p>
         </div>
         <ul>
-            <?php foreach ($ads as $ad) : ?>
+            <?php foreach ($newAds as $ad) : ?>
                 <?= AdWidget::widget(['ad' => $ad]) ?>
             <?php endforeach; ?>
         </ul>
@@ -92,86 +93,9 @@ $this->title = 'Куплю Продам';
             <p class="tickets-list__title">Самые обсуждаемые</p>
         </div>
         <ul>
-            <li class="tickets-list__item">
-                <div class="ticket-card ticket-card--color09">
-                    <div class="ticket-card__img">
-                        <img src="../img/item09.jpg" srcset="../img/item09@2x.jpg 2x" alt="Изображение товара">
-                    </div>
-                    <div class="ticket-card__info">
-                        <span class="ticket-card__label">Куплю</span>
-                        <div class="ticket-card__categories">
-                            <a href="#">Дом</a>
-                        </div>
-                        <div class="ticket-card__header">
-                            <h3 class="ticket-card__title"><a href="#">Монстера</a></h3>
-                            <p class="ticket-card__price"><span class="js-sum">1000</span> ₽</p>
-                        </div>
-                        <div class="ticket-card__desc">
-                            <p>Куплю монстеру зеленую в хорошем зеленом состоянии, буду поливать...</p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="tickets-list__item">
-                <div class="ticket-card ticket-card--color10">
-                    <div class="ticket-card__img">
-                        <img src="../img/item10.jpg" srcset="../img/item10@2x.jpg 2x" alt="Изображение товара">
-                    </div>
-                    <div class="ticket-card__info">
-                        <span class="ticket-card__label">ПРОДАМ</span>
-                        <div class="ticket-card__categories">
-                            <a href="#">Дом</a>
-                        </div>
-                        <div class="ticket-card__header">
-                            <h3 class="ticket-card__title"><a href="#">Мое старое кресло</a></h3>
-                            <p class="ticket-card__price"><span class="js-sum">4000</span> ₽</p>
-                        </div>
-                        <div class="ticket-card__desc">
-                            <p>Продам свое старое кресло, чтобы сидеть и читать книги зимними...</p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="tickets-list__item">
-                <div class="ticket-card ticket-card--color11">
-                    <div class="ticket-card__img">
-                        <img src="../img/item11.jpg" srcset="../img/item11@2x.jpg 2x" alt="Изображение товара">
-                    </div>
-                    <div class="ticket-card__info">
-                        <span class="ticket-card__label">ПРОДАМ</span>
-                        <div class="ticket-card__categories">
-                            <a href="#">ЭЛЕКТРОНИКА</a>
-                        </div>
-                        <div class="ticket-card__header">
-                            <h3 class="ticket-card__title"><a href="#">Дедушкины часы</a></h3>
-                            <p class="ticket-card__price"><span class="js-sum">45 000</span> ₽</p>
-                        </div>
-                        <div class="ticket-card__desc">
-                            <p>Продаю дедушкины часы в&nbsp;прекрасном состоянии, ходят до...</p>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="tickets-list__item">
-                <div class="ticket-card ticket-card--color04">
-                    <div class="ticket-card__img">
-                        <img src="../img/item04.jpg" srcset="../img/item04@2x.jpg 2x" alt="Изображение товара">
-                    </div>
-                    <div class="ticket-card__info">
-                        <span class="ticket-card__label">Куплю</span>
-                        <div class="ticket-card__categories">
-                            <a href="#">Дом</a>
-                        </div>
-                        <div class="ticket-card__header">
-                            <h3 class="ticket-card__title"><a href="#">Кофеварка</a></h3>
-                            <p class="ticket-card__price"><span class="js-sum">2000</span> ₽</p>
-                        </div>
-                        <div class="ticket-card__desc">
-                            <p>Куплю вот такую итальянскую кофеварку, можно любой фирмы...</p>
-                        </div>
-                    </div>
-                </div>
-            </li>
+            <?php foreach ($popularAds as $ad) : ?>
+                <?= AdWidget::widget(['ad' => $ad]) ?>
+            <?php endforeach; ?>
         </ul>
     </div>
 </section>

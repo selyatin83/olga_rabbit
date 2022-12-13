@@ -7,6 +7,7 @@ use app\assets\MainAsset;
 use omarinina\domain\models\Users;
 use yii\bootstrap5\Html;
 use yii\widgets\Menu;
+use yii\helpers\Url;
 
 /** @var Users $currentUser */
 $currentUser = Yii::$app->user->identity;
@@ -34,7 +35,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
 <header class="header header--logged">
     <div class="header__wrapper">
-        <a class="header__logo logo" href="/html/main.html">
+        <a class="header__logo logo" href="<?= Url::to(['/']) ?>">
             <img src="/img/logo.svg" width="179" height="34" alt="Логотип Куплю Продам">
         </a>
         <?php if (!Yii::$app->user->isGuest) : ?>
