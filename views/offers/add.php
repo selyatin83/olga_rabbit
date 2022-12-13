@@ -69,9 +69,10 @@ use yii\widgets\ActiveForm;
                                 'rows' => 10
                             ]])->textarea() ?>
                     </div>
+                    <?= $model->getErrors('categories')[0] . PHP_EOL ?>
                     <?= $form->field($model, 'categories', [
                             'options' => ['class' => 'ticket-form__row'],
-                            'template' => "{input}\n{error}"
+                            'template' => "{input}"
                         ])
                         ->dropDownList(
                             ArrayHelper::map($categories, 'id', 'name'),
@@ -83,11 +84,13 @@ use yii\widgets\ActiveForm;
                         )
                     ?>
                     <div class="ticket-form__row">
+                        <div>
                         <?= $form->field($model, 'price', ['options' => ['class' => 'form__field form__field--price'], 'template' => "{input}\n{label}\n{error}"])
-                            ->input('number', ['class' => 'js-field js-price', 'id' => 'price-field']) ?>
+                            ->input('number', ['class' => 'js-field js-price form__field form__field--price', 'id' => 'price-field']) ?>
+                        </div>
+                        <div class="form__switch switch">
                         <?= $form->field($model, 'typeId', [
-                            'options' => ['class' => 'form__switch switch'],
-                            'template' => "{input}\n{error}"
+                            'template' => "{input}"
                         ])
                             ->radioList(ArrayHelper::map($types, 'id', 'name'), ['class' => 'form__switch switch',
                                 'item' => static function ($index, $label, $name, $checked, $value) {
@@ -99,9 +102,12 @@ use yii\widgets\ActiveForm;
                                 },
                             ])
                         ?>
-                </div>
+                        </div>
+                        <?= $model->getErrors('typeId')[0] . PHP_EOL ?>
+                    </div>
 
-            <?php
+
+                    <?php
             echo Html::submitButton('Опубликовать', ['class' => 'form__button btn btn--medium js-button']);
 
             ActiveForm::end()
