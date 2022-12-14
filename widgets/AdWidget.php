@@ -11,11 +11,6 @@ class AdWidget extends Widget
 {
     public Ads $ad;
 
-    public function init()
-    {
-        parent::init();
-    }
-
     public function run()
     {
         return $this->render('adWidget', ['ad' => $this->ad]);

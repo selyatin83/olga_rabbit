@@ -5,8 +5,7 @@ declare(strict_types=1);
 /** @var Ads $ad */
 
 use omarinina\domain\models\ads\Ads;
-
-//$firstImage = array_shift($ad->images);
+use yii\helpers\Url;
 
 ?>
 
@@ -23,7 +22,7 @@ use omarinina\domain\models\ads\Ads;
                 <?php endforeach; ?>
             </div>
             <div class="ticket-card__header">
-                <h3 class="ticket-card__title"><a href="#"><?= $ad->name ?></a></h3>
+                <h3 class="ticket-card__title"><a href="<?= Url::to(['offers/view', 'id' => $ad->id]) ?>"><?= $ad->name ?></a></h3>
                 <p class="ticket-card__price"><span class="js-sum"><?= $ad->price ?></span> ₽</p>
             </div>
             <div class="ticket-card__desc">

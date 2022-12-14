@@ -30,3 +30,8 @@ Yii::$container->set(
     \omarinina\application\services\image\interfaces\ImageSaveInterface::class,
     \omarinina\application\services\image\ImageSaveService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\factories\ad\interfaces\CommentFactoryInterface::class,
+    \omarinina\application\factories\ad\CommentFactory::class
+);

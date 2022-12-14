@@ -70,7 +70,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         <?php endif; ?>
         <?php if (Yii::$app->user->isGuest) : ?>
         <?php
-            echo Html::a('Вход и регистрация', 'register/index', ['class'=>'header__input', 'style' => 'display:flex']);
+            echo Html::a('Вход и регистрация', Url::to(['register/index']), ['class'=>'header__input', 'style' => 'display:flex']);
         ?>
         <?php endif; ?>
     </div>
