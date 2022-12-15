@@ -1,0 +1,16 @@
+.error__list {
+    font-size: 12px;
+    color: #df5656;
+}
+
+.error__list--type {
+    margin-left: 47px;
+}
+
+.error__list--nowrap {
+    white-space: nowrap;
+}
+
+.form__switch {
+    flex-wrap: wrap;
+}

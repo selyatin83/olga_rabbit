@@ -69,7 +69,7 @@ use yii\widgets\ActiveForm;
                                 'rows' => 10
                             ]])->textarea() ?>
                     </div>
-                    <?= $model->getErrors('categories')[0] ?? null ?>
+                    <span class="error__list"><?= $model->getErrors('categories')[0] ?? null ?></span>
                     <?= $form->field($model, 'categories', [
                             'options' => ['class' => 'ticket-form__row'],
                             'template' => "{input}"
@@ -85,25 +85,32 @@ use yii\widgets\ActiveForm;
                     ?>
                     <div class="ticket-form__row">
                         <div>
-                        <?= $form->field($model, 'price', ['options' => ['class' => 'form__field form__field--price'], 'template' => "{input}\n{label}\n{error}"])
+                        <?= $form->field($model, 'price', ['options' => ['class' => 'form__field form__field--price'], 'template' => "{input}\n{label}"])
                             ->input('number', ['class' => 'js-field js-price form__field form__field--price', 'id' => 'price-field']) ?>
+                            <span class="error__list error__list--nowrap" style="display: flex">
+                                <?= $model->getErrors('price')[0] ?? null ?>
+                            </span>
                         </div>
-                        <div class="form__switch switch">
-                        <?= $form->field($model, 'typeId', [
-                            'template' => "{input}"
-                        ])
-                            ->radioList(ArrayHelper::map($types, 'id', 'name'), ['class' => 'form__switch switch',
-                                'item' => static function ($index, $label, $name, $checked, $value) {
-                                    return
-                                        Html::beginTag('div', ['class' => 'switch__item']) .
-                                        Html::radio($name, $checked, ['value' => $value, 'id' => $index, 'class' => 'visually-hidden']) .
-                                        Html::label($label, $index, ['class' => 'switch__button']) .
-                                        Html::endTag('div');
-                                },
+                        <div>
+                            <div class="form__switch switch">
+                            <?= $form->field($model, 'typeId', [
+                                'template' => "{input}"
                             ])
-                        ?>
+                                ->radioList(ArrayHelper::map($types, 'id', 'name'), ['class' => 'form__switch switch',
+                                    'item' => static function ($index, $label, $name, $checked, $value) {
+                                        return
+                                            Html::beginTag('div', ['class' => 'switch__item']) .
+                                            Html::radio($name, $checked, ['value' => $value, 'id' => $index, 'class' => 'visually-hidden']) .
+                                            Html::label($label, $index, ['class' => 'switch__button']) .
+                                            Html::endTag('div');
+                                    },
+                                ])
+                            ?>
+                            </div>
+                            <div class="error__list error__list--type">
+                                <?= $model->getErrors('typeId')[0] ?? null ?>
+                            </div>
                         </div>
-                        <?= $model->getErrors('typeId')[0] ?? null ?>
                     </div>
 
 
