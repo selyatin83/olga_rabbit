@@ -5,7 +5,9 @@
 
 use app\assets\MainAsset;
 use omarinina\domain\models\Users;
+use omarinina\infrastructure\models\forms\SearchForm;
 use yii\bootstrap5\Html;
+use yii\widgets\ActiveForm;
 use yii\widgets\Menu;
 use yii\helpers\Url;
 
@@ -27,7 +29,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <html lang="<?= Yii::$app->sourceLanguage ?>">
 <head>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?= Html::encode($this->title) ?></title>
+    <title><?= Html::encode(Yii::$app->params['title']) ?></title>
     <?php $this->head() ?>
 </head>
 <body>
@@ -58,11 +60,27 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             ?>
         </nav>
         <?php endif; ?>
-        <form class="search" method="get" action="#" autocomplete="off">
-            <input type="search" name="query" placeholder="Поиск" aria-label="Поиск">
-            <div class="search__icon"></div>
-            <div class="search__close-btn"></div>
-        </form>
+        <?php
+        $model = new SearchForm();
+        if (array_key_exists('value', $this->params)) {
+            $model->search = $this->params['value'];
+        }
+
+        $form = ActiveForm::begin([
+            'id' => SearchForm::class,
+            'options' => ['class' => 'search'],
+            'fieldConfig' => [
+                'template' => "{label}\n{input}\n
+                    <div class=\"search__icon\"></div>\n
+                    {error}",
+            ],
+            'action' => ['search/index'],
+            'method' => 'get',
+        ]);
+        ?>
+        <?= $form->field($model, 'search')->textInput(['placeholder' => 'Поиск']) ?>
+        <div class="search__close-btn"></div>
+        <?php ActiveForm::end() ?>
         <?php if (!Yii::$app->user->isGuest) : ?>
             <a class="header__avatar avatar" href="#">
                 <img src="<?= $currentUser->avatarSrc ?>" srcset="<?= $currentUser->avatarSrc ?> 2x" alt="Аватар пользователя">

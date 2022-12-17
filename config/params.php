@@ -14,5 +14,6 @@ return [
         '/img/cat05@2x.jpg',
         '/img/cat06@2x.jpg',
     ],
-    'defaultImageSrc' => '/img/blank@2x.png'
+    'defaultImageSrc' => '/img/blank@2x.png',
+    'title' => 'Куплю Продам',
 ];

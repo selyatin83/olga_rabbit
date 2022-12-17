@@ -1,5 +1,7 @@
 <?php
 
+use yii\sphinx\Connection;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -14,6 +16,12 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'sphinx' => [
+            'class' => Connection::class,
+            'dsn' => 'mysql:host=127.0.0.1;port=9306;dbname=buyAndSell',
+            'username' => 'root',
+            'password' => 'root_password',
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

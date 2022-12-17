@@ -1,5 +1,7 @@
 <?php
 
+use wapmorgan\yii2inflection\Inflection;
+use yii\sphinx\Connection;
 use yii\debug\panels\DbPanel;
 use yii\debug\Module;
 use yii\log\FileTarget;
@@ -22,6 +24,15 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        'sphinx' => [
+            'class' => Connection::class,
+            'dsn' => 'mysql:host=sphinxsearch;port=9306;',
+            'username' => 'root',
+            'password' => 'root_password',
+        ],
+        'inflection' => [
+            'class' => Inflection::class
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'Y8_s8-6VrhNYFHLcQHigCwvITCMZUteq',

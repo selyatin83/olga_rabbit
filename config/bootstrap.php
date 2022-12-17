@@ -35,3 +35,8 @@ Yii::$container->set(
     \omarinina\application\factories\ad\interfaces\CommentFactoryInterface::class,
     \omarinina\application\factories\ad\CommentFactory::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\ad\interfaces\FilterAdsGetInterface::class,
+    \omarinina\application\services\ad\FilterAdsGetService::class
+);

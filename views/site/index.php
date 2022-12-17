@@ -9,17 +9,16 @@ declare(strict_types=1);
 use app\widgets\AdWidget;
 use omarinina\domain\models\ads\Ads;
 
-$this->title = 'Куплю Продам';
 ?>
 
-<?php if (!$newAds): ?>
+<?php if (!$newAds) : ?>
 <div class="message">
     <div class="message__text">
         <p>На сайте еще не опубликовано ни&nbsp;одного объявления.</p>
     </div>
     <a href="#" class="message__link btn btn--big">Вход и регистрация</a>
 </div>
-<?php else: ?>
+<?php else : ?>
 <section class="categories-list">
     <h1 class="visually-hidden">Сервис объявлений "Куплю - продам"</h1>
     <ul class="categories-list__wrapper">

@@ -9,7 +9,7 @@ use yii\base\Widget;
 
 class AdWidget extends Widget
 {
-    public Ads $ad;
+    public Ads|array $ad;
 
     public function run()
     {

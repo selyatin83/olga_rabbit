@@ -24,3 +24,11 @@ services:
       - '3306:3306'
     volumes:
       - ./docker/data/mysql:/var/lib/mysql
+
+  sphinxsearch:
+    image: sphinx:latest
+    build:
+      context: docker/sphinx
+    volumes:
+      - ./docker/sphinx/sphinx.conf:/etc/sphinxsearch/sphinx.conf
+      - ./docker/sphinx/data:/var/lib/sphinxsearch/data

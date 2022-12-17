@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
 use omarinina\domain\models\ads\Ads;
 use Yii;
 use yii\filters\AccessControl;
@@ -13,6 +14,19 @@ use app\models\ContactForm;
 
 class SiteController extends Controller
 {
+    /** @var FilterAdsGetInterface */
+    private FilterAdsGetInterface $filterAds;
+
+    public function __construct(
+        $id,
+        $module,
+        FilterAdsGetInterface $filterAds,
+        $config = []
+    ) {
+        $this->filterAds = $filterAds;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -62,14 +76,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $newAds = Ads::find()->orderBy('createAt DESC')->limit(8)->all();
-        $popularAds = Ads::find()
-            ->joinWith(['comments'])
-            ->select(['ads.*', 'COUNT(comments.id) AS commentsCount'])
-            ->groupBy(['ads.id'])
-            ->orderBy(['commentsCount' => SORT_DESC])
-            ->limit(8)
-            ->all();
+        $newAds = $this->filterAds->getNewAds();
+        $popularAds = $this->filterAds->getPopularAds();
 
         return $this->render('index', [
             'newAds' => $newAds,

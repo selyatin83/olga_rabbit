@@ -9,6 +9,7 @@
 <img src="https://img.shields.io/badge/php-%5E8.1.0-blue">
 <img src="https://img.shields.io/badge/mysql-~8.0.31-orange">
 <img src="https://img.shields.io/badge/yii2-~2.0.45-green">
+<img src="https://img.shields.io/badge/sphinx-latest-blue">
 <img src="https://img.shields.io/badge/phpunit-~9.5.0-blue">
 
 [//]: # (<img src="https://img.shields.io/badge/redis-5-red">)
@@ -44,7 +45,7 @@ DIRECTORY STRUCTURE
       commands/           contains console commands (controllers)
       config/             contains application configurations
       controllers/        contains Web controller classes
-      docker/             contains data from DB volumes
+      docker/             contains data from DB/sphinx volumes
       fixtures/           contains fake data for DB
       mail/               contains view files for e-mails
       migrations/         contains migrations to create current tables for DB
@@ -135,6 +136,18 @@ The command to generate data
 ```
 docker-compose run --rm php yii fixture/generate example --count=n
 ```
+
+
+### Configuration for sphinx full-text search
+
+We work with Sphinx as docker container. You should do next step to start it locally.
+
+If you have already started your another containers, start docker containers with:
+
+    docker-compose up
+   
+If your containers haven't started yet please before start containers without sphinx. It needs to have connection to DB before starting.
+
 
 
 

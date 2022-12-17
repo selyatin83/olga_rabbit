@@ -36,5 +36,6 @@ tests/_support/_generated
 /.vagrant
 
 docker/data
+docker/sphinx/data
 
 web/uploads
