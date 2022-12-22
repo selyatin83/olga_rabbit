@@ -26,7 +26,6 @@ class SearchController extends Controller
     public function actionIndex()
     {
         $searchForm = new SearchForm();
-        $newAds = $this->filterAds->getNewAds();
 
         if (Yii::$app->request->getIsGet()) {
             $search = Yii::$app->request->get();
@@ -35,6 +34,7 @@ class SearchController extends Controller
 
             if ($searchForm->validate()) {
                 $searchedAds = $this->filterAds->getSearchedAds($value);
+                $newAds = $this->filterAds->getNewAds();
 
                 return $this->render('index', [
                     'value' => $value ?? null,

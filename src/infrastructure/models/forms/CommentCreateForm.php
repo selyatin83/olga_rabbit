@@ -15,7 +15,7 @@ class CommentCreateForm extends Model
     {
         return [
             ['text', 'required'],
-            ['text', 'string', 'min' => 20],
+            ['text', 'string', 'min' => 20, 'max' => 1000],
         ];
     }
 
