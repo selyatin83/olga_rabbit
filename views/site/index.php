@@ -8,6 +8,7 @@ declare(strict_types=1);
 /** @var AdCategories[] $categories */
 
 use app\widgets\AdWidget;
+use app\widgets\CategoryNavigationWidget;
 use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
 
@@ -23,19 +24,7 @@ use omarinina\domain\models\ads\Ads;
 <?php else : ?>
 <section class="categories-list">
     <h1 class="visually-hidden">Сервис объявлений "Куплю - продам"</h1>
-    <ul class="categories-list__wrapper">
-        <?php foreach ($categories as $category) : ?>
-            <?php $categorySrc = Yii::$app->params['categorySrc'][array_rand(Yii::$app->params['categorySrc'])] ?>
-        <li class="categories-list__item">
-            <a href="#" class="category-tile category-tile--default">
-          <span class="category-tile__image">
-            <img src="<?= $categorySrc ?>" srcset="<?= $categorySrc ?> 2x" alt="Иконка категории">
-          </span>
-                <span class="category-tile__label"><?= $category->name ?> <span class="category-tile__qty js-qty"><?= $category->getAmountAds() ?></span></span>
-            </a>
-        </li>
-        <?php endforeach; ?>
-    </ul>
+    <?= CategoryNavigationWidget::widget(['categories' => $categories]) ?>
 </section>
 <section class="tickets-list">
     <h2 class="visually-hidden">Самые новые предложения</h2>

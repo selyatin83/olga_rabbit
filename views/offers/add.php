@@ -11,8 +11,8 @@ use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var AdCreateForm $model */
-/** @var AdCategories $categories */
-/** @var AdTypes $types */
+/** @var AdCategories[] $categories */
+/** @var AdTypes[] $types */
 
 ?>
 
@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
                     'errorOptions' => ['tag' => 'span', 'class' => 'error__list', 'style' => 'display: flex']
                 ]
             ])
-            ?>
+?>
                 <div class="ticket-form__avatar-container js-preview-container">
                     <div class="ticket-form__avatar js-preview"></div>
                     <div class="ticket-form__field-avatar">
@@ -74,14 +74,14 @@ use yii\widgets\ActiveForm;
                             'options' => ['class' => 'ticket-form__row'],
                             'template' => "{input}"
                         ])
-                        ->dropDownList(
-                            ArrayHelper::map($categories, 'id', 'name'),
-                            [
-                                'class' => 'ticket-form__row form__select js-multiple-select',
-                                'placeholder' => "Выбрать категорию публикации",
-                                'multiple' => true
-                            ]
-                        )
+                                              ->dropDownList(
+                                                  ArrayHelper::map($categories, 'id', 'name'),
+                                                  [
+                                                  'class' => 'ticket-form__row form__select js-multiple-select',
+                                                  'placeholder' => "Выбрать категорию публикации",
+                                                  'multiple' => true
+                                                  ]
+                                              )
                     ?>
                     <div class="ticket-form__row">
                         <div>
@@ -91,7 +91,9 @@ use yii\widgets\ActiveForm;
                                 <?= $model->getErrors('price')[0] ?? null ?>
                             </span>
                         </div>
+                        <?php if (array_key_exists(0, $model->getErrors('typeId'))) : ?>
                         <div>
+                        <?php endif; ?>
                             <div class="form__switch switch">
                             <?= $form->field($model, 'typeId', [
                                 'template' => "{input}"
@@ -110,15 +112,17 @@ use yii\widgets\ActiveForm;
                             <div class="error__list error__list--type">
                                 <?= $model->getErrors('typeId')[0] ?? null ?>
                             </div>
+                            <?php if (array_key_exists(0, $model->getErrors('typeId'))) : ?>
                         </div>
+                            <?php endif; ?>
                     </div>
 
 
                     <?php
-            echo Html::submitButton('Опубликовать', ['class' => 'form__button btn btn--medium js-button']);
+                    echo Html::submitButton('Опубликовать', ['class' => 'form__button btn btn--medium js-button']);
 
-            ActiveForm::end()
-            ?>
+                    ActiveForm::end()
+                    ?>
         </div>
     </div>
 </section>

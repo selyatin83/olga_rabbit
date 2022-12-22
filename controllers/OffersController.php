@@ -8,12 +8,14 @@ use omarinina\application\factories\ad\dto\NewAdDto;
 use omarinina\application\factories\ad\dto\NewCommentDto;
 use omarinina\application\factories\ad\interfaces\AdFactoryInterface;
 use omarinina\application\factories\ad\interfaces\CommentFactoryInterface;
+use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
 use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
 use omarinina\domain\models\ads\AdTypes;
 use omarinina\infrastructure\models\forms\AdCreateForm;
 use omarinina\infrastructure\models\forms\CommentCreateForm;
 use Yii;
+use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,15 +30,20 @@ class OffersController extends Controller
     /** @var CommentFactoryInterface  */
     private CommentFactoryInterface $commentFactory;
 
+    /** @var FilterAdsGetInterface */
+    private FilterAdsGetInterface $filterAds;
+
     public function __construct(
         $id,
         $module,
         AdFactoryInterface $adFactory,
         CommentFactoryInterface $commentFactory,
+        FilterAdsGetInterface $filterAds,
         $config = []
     ) {
         $this->adFactory = $adFactory;
         $this->commentFactory = $commentFactory;
+        $this->filterAds = $filterAds;
         parent::__construct($id, $module, $config);
     }
 
@@ -90,7 +97,12 @@ class OffersController extends Controller
         ]);
     }
 
-    public function actionView(int $id)
+    /**
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     */
+    public function actionView(int $id): string|Response
     {
         $currentAd = Ads::findOne($id);
 
@@ -116,6 +128,37 @@ class OffersController extends Controller
         return $this->render('view', [
             'currentAd' => $currentAd,
             'model' => $commentForm
+        ]);
+    }
+
+    public function actionCategory(int $categoryId)
+    {
+        $currentCategory = AdCategories::findOne($categoryId);
+
+        if (!$currentCategory) {
+            throw new NotFoundHttpException('Category is not found', 404);
+        }
+
+        $categories = AdCategories::find()->joinWith(['adsToCategories'])->where(['not', ['adId' => null]])->all();
+        $categoryAds = $this->filterAds->getCategoryAds($categoryId);
+
+        $pagination = new Pagination([
+            'totalCount' => $categoryAds->count(),
+            'pageSize' => Yii::$app->params['categoryAdsOnPage'],
+            'forcePageParam' => false,
+            'pageSizeParam' => false
+        ]);
+
+        $categoryAdsWithPagination = $categoryAds->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+
+        return $this->render('category', [
+            'categories' => $categories,
+            'categoryAds' => $categoryAdsWithPagination,
+            'currentCategory' => $currentCategory,
+            'pagination' => $pagination
         ]);
     }
 }

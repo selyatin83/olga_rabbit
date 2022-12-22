@@ -5,7 +5,6 @@
  * @var $index integer
  */
 return [
-    'adId' => $faker->numberBetween(1, 50),
+    'adId' => $faker->unique()->numberBetween(1, 107),
     'categoryId' => $faker->numberBetween(1, 6),
 ];
-

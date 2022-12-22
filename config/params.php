@@ -16,4 +16,5 @@ return [
     ],
     'defaultImageSrc' => '/img/blank@2x.png',
     'title' => 'Куплю Продам',
+    'categoryAdsOnPage' => 8,
 ];

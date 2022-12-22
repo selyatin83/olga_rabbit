@@ -3,8 +3,13 @@
 namespace omarinina\application\services\ad;
 
 use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
+use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
+use Yii;
+use yii\data\Pagination;
+use yii\db\ActiveQuery;
 use yii\sphinx\Query;
+use yii\web\NotFoundHttpException;
 
 class FilterAdsGetService implements FilterAdsGetInterface
 {
@@ -33,8 +38,15 @@ class FilterAdsGetService implements FilterAdsGetInterface
             ->all();
     }
 
-    public function getCategoryAds(int $categoryId): ?array
+    /**
+     * @param int $categoryId
+     * @return ActiveQuery
+     */
+    public function getCategoryAds(int $categoryId): ActiveQuery
     {
-        // TODO: Implement getCategoryAds() method.
+        return Ads::find()
+            ->joinWith('adsToCategories')
+            ->where(['categoryId' => $categoryId])
+            ->orderBy('createAt DESC');
     }
 }
