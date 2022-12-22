@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
+use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
 use Yii;
 use yii\filters\AccessControl;
@@ -78,10 +79,12 @@ class SiteController extends Controller
     {
         $newAds = $this->filterAds->getNewAds();
         $popularAds = $this->filterAds->getPopularAds();
+        $categories = AdCategories::find()->joinWith(['adsToCategories'])->where(['not', ['adId' => null]])->all();
 
         return $this->render('index', [
             'newAds' => $newAds,
-            'popularAds' => $popularAds
+            'popularAds' => $popularAds,
+            'categories' => $categories
         ]);
     }
 

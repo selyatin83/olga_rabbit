@@ -70,4 +70,13 @@ class AdCategories extends ActiveRecord
         return $this->hasMany(Ads::class, ['id' => 'adId'])
             ->viaTable('adsToCategories', ['categoryId' => 'id']);
     }
+
+    /**
+     * @return int
+     * @throws InvalidConfigException
+     */
+    public function getAmountAds(): int
+    {
+        return $this->getAds()->count();
+    }
 }

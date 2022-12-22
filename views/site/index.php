@@ -5,8 +5,10 @@ declare(strict_types=1);
 /** @var yii\web\View $this */
 /** @var Ads[] $newAds */
 /** @var Ads[] $popularAds */
+/** @var AdCategories[] $categories */
 
 use app\widgets\AdWidget;
+use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
 
 ?>
@@ -22,54 +24,17 @@ use omarinina\domain\models\ads\Ads;
 <section class="categories-list">
     <h1 class="visually-hidden">Сервис объявлений "Куплю - продам"</h1>
     <ul class="categories-list__wrapper">
+        <?php foreach ($categories as $category) : ?>
+            <?php $categorySrc = Yii::$app->params['categorySrc'][array_rand(Yii::$app->params['categorySrc'])] ?>
         <li class="categories-list__item">
             <a href="#" class="category-tile category-tile--default">
           <span class="category-tile__image">
-            <img src="../img/cat.jpg" srcset="../img/cat@2x.jpg 2x" alt="Иконка категории">
+            <img src="<?= $categorySrc ?>" srcset="<?= $categorySrc ?> 2x" alt="Иконка категории">
           </span>
-                <span class="category-tile__label">Дом <span class="category-tile__qty js-qty">81</span></span>
+                <span class="category-tile__label"><?= $category->name ?> <span class="category-tile__qty js-qty"><?= $category->getAmountAds() ?></span></span>
             </a>
         </li>
-        <li class="categories-list__item">
-            <a href="#" class="category-tile category-tile--default">
-          <span class="category-tile__image">
-            <img src="../img/cat02.jpg" srcset="../img/cat02@2x.jpg 2x" alt="Иконка категории">
-          </span>
-                <span class="category-tile__label">Электроника <span class="category-tile__qty js-qty">62</span></span>
-            </a>
-        </li>
-        <li class="categories-list__item">
-            <a href="#" class="category-tile category-tile--default">
-          <span class="category-tile__image">
-            <img src="../img/cat03.jpg" srcset="../img/cat03@2x.jpg 2x" alt="Иконка категории">
-          </span>
-                <span class="category-tile__label">Одежда <span class="category-tile__qty js-qty">106</span></span>
-            </a>
-        </li>
-        <li class="categories-list__item">
-            <a href="#" class="category-tile category-tile--default">
-          <span class="category-tile__image">
-            <img src="../img/cat04.jpg" srcset="../img/cat04@2x.jpg 2x" alt="Иконка категории">
-          </span>
-                <span class="category-tile__label">Спорт/отдых <span class="category-tile__qty js-qty">86</span></span>
-            </a>
-        </li>
-        <li class="categories-list__item">
-            <a href="#" class="category-tile category-tile--default">
-          <span class="category-tile__image">
-            <img src="../img/cat05.jpg" srcset="../img/cat05@2x.jpg 2x" alt="Иконка категории">
-          </span>
-                <span class="category-tile__label">Авто <span class="category-tile__qty js-qty">34</span></span>
-            </a>
-        </li>
-        <li class="categories-list__item">
-            <a href="#" class="category-tile category-tile--default">
-          <span class="category-tile__image">
-            <img src="../img/cat06.jpg" srcset="../img/cat06@2x.jpg 2x" alt="Иконка категории">
-          </span>
-                <span class="category-tile__label">Книги <span class="category-tile__qty js-qty">92</span></span>
-            </a>
-        </li>
+        <?php endforeach; ?>
     </ul>
 </section>
 <section class="tickets-list">
