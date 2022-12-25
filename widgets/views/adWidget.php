@@ -7,6 +7,7 @@ declare(strict_types=1);
 use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Images;
 use omarinina\domain\models\ads\Ads;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 if (is_array($ad)) {
@@ -52,8 +53,8 @@ if (is_array($ad)) {
     <div class="ticket-card ticket-card--color01">
         <div class="ticket-card__img">
             <img
-                    src="<?= $ad->images[0]->imageSrc ?? '/img/blank.png' ?>"
-                    srcset="<?= $ad->images[0]->imageSrc ?? '/img/blank@2x.png 2x' ?>" alt="Изображение товара">
+                    src="<?= $ad->getFirstImage() ?? '/img/blank.png' ?>"
+                    srcset="<?= $ad->getFirstImage() ?? '/img/blank@2x.png 2x' ?>" alt="Изображение товара">
         </div>
         <div class="ticket-card__info">
             <span class="ticket-card__label"><?= $ad->type->name ?></span>
@@ -64,14 +65,27 @@ if (is_array($ad)) {
             </div>
             <div class="ticket-card__header">
                 <h3 class="ticket-card__title">
-                    <a href="<?= Url::to(['offers/view', 'id' => $ad->id]) ?>"><?= $ad->name ?></a>
+                    <a
+                        <?php if (Yii::$app->request->url === '/my/index') : ?>
+                            href="<?= Url::to(['offers/edit', 'id' => $ad->id]) ?>"
+                        <?php else : ?>
+                            href="<?= Url::to(['offers/view', 'id' => $ad->id]) ?>"
+                        <?php endif; ?>
+                    ><?= $ad->name ?></a>
                 </h3>
                 <p class="ticket-card__price"><span class="js-sum"><?= $ad->price ?></span> ₽</p>
             </div>
+            <?php if (Yii::$app->request->url !== '/my/index') : ?>
             <div class="ticket-card__desc">
                 <p><?= mb_strimwidth($ad->description, 0, 55, '...') ?></p>
             </div>
+            <?php endif; ?>
         </div>
+        <?php if (Yii::$app->request->url === '/my/index') : ?>
+            <?php
+            echo Html::a('Удалить', Url::to(['my/delete', 'id' => $ad->id]), ['class'=>'ticket-card__del js-delete']);
+            ?>
+        <?php endif; ?>
     </div>
 </li>
 <?php endif; ?>

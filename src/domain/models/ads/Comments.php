@@ -78,4 +78,14 @@ class Comments extends ActiveRecord
     {
         return $this->hasOne(Users::class, ['id' => 'author']);
     }
+
+    /**
+     * @return void
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteComment(): void
+    {
+        $this->delete();
+    }
 }

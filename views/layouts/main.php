@@ -45,7 +45,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             <?php
             echo Menu::widget([
                 'items' => [
-                    ['label' => 'Публикации', 'url' => ['/html/my-tickets.html']],
+                    ['label' => 'Публикации', 'url' => ['my/index']],
                     ['label' => 'Комментарии', 'url' => ['/html/comments.html']],
                 ],
                 'options' => [

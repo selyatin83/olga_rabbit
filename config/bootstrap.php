@@ -40,3 +40,8 @@ Yii::$container->set(
     \omarinina\application\services\ad\interfaces\FilterAdsGetInterface::class,
     \omarinina\application\services\ad\FilterAdsGetService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\category\interfaces\AdCategoryUpdateInterface::class,
+    \omarinina\application\services\category\AdCategoryUpdateService::class
+);

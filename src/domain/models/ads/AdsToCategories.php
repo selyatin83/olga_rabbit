@@ -71,4 +71,14 @@ class AdsToCategories extends ActiveRecord
     {
         return $this->hasOne(AdCategories::class, ['id' => 'categoryId']);
     }
+
+    /**
+     * @return void
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteCategory(): void
+    {
+        $this->delete();
+    }
 }

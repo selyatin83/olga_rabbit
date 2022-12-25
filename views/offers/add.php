@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use omarinina\domain\models\ads\AdCategories;
+use omarinina\domain\models\ads\Ads;
 use omarinina\domain\models\ads\AdTypes;
 use omarinina\infrastructure\models\forms\AdCreateForm;
+use omarinina\infrastructure\models\forms\AdEditForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -13,6 +15,21 @@ use yii\widgets\ActiveForm;
 /** @var AdCreateForm $model */
 /** @var AdCategories[] $categories */
 /** @var AdTypes[] $types */
+/** @var Ads $currentAd */
+
+if ($currentAd) {
+    $model->name = $currentAd->name ?? null;
+    $model->email = $currentAd->email ?? null;
+    $model->description = $currentAd->description ?? null;
+    $model->categories = array_map(static function ($category) {
+        return $category->id;
+    }, $currentAd->adCategories) ?? [];
+    $model->typeId = $currentAd->typeId ?? null;
+    $model->price = $currentAd->price ?? null;
+    $formName = AdEditForm::class;
+} else {
+    $formName = AdCreateForm::class;
+}
 
 ?>
 
@@ -21,7 +38,7 @@ use yii\widgets\ActiveForm;
         <h1 class="ticket-form__title">Новая публикация</h1>
         <div class="ticket-form__tile">
             <?php $form = ActiveForm::begin([
-                'id' => AdCreateForm::class,
+                'id' => $formName,
                 'options' => [
                     'class' => 'ticket-form__form form'
                 ],
@@ -32,14 +49,25 @@ use yii\widgets\ActiveForm;
                 ]
             ])
 ?>
-                <div class="ticket-form__avatar-container js-preview-container">
-                    <div class="ticket-form__avatar js-preview"></div>
+                <div class="ticket-form__avatar-container js-preview-container
+                <?php if ($currentAd && $currentAd->getFirstImage()) :
+                    ?> uploaded <?php
+                endif; ?>">
+                    <div class="ticket-form__avatar js-preview">
+                        <?php if ($currentAd && $currentAd->getFirstImage()) : ?>
+                            <img
+                                    src="<?= $currentAd->getFirstImage() ?>"
+                                    srcset="<?= $currentAd->getFirstImage() ?> 2x"
+                                    alt=""
+                            >
+                        <?php endif; ?>
+                    </div>
                     <div class="ticket-form__field-avatar">
                         <?=$form->field($model, 'images[]', ['template' => "{input}\n{error}"])
                             ->fileInput([
                                 'class' => 'visually-hidden js-file-field',
                                 'id' => 'avatar',
-                                'multiple' => true
+                                'multiple' => true,
                             ])
                         ?>
                         <label for="avatar">
@@ -85,8 +113,14 @@ use yii\widgets\ActiveForm;
                     ?>
                     <div class="ticket-form__row">
                         <div>
-                        <?= $form->field($model, 'price', ['options' => ['class' => 'form__field form__field--price'], 'template' => "{input}\n{label}"])
-                            ->input('number', ['class' => 'js-field js-price form__field form__field--price', 'id' => 'price-field']) ?>
+                        <?= $form->field($model, 'price', [
+                                'options' => ['class' => 'form__field form__field--price'],
+                                'template' => "{input}\n{label}"
+                        ])
+                            ->input('number', [
+                                    'class' => 'js-field js-price form__field form__field--price',
+                                    'id' => 'price-field'
+                            ]) ?>
                             <span class="error__list error__list--nowrap" style="display: flex">
                                 <?= $model->getErrors('price')[0] ?? null ?>
                             </span>

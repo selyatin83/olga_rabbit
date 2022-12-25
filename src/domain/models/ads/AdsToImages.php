@@ -69,4 +69,14 @@ class AdsToImages extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Images::class, ['id' => 'imageId']);
     }
+
+    /**
+     * @return void
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteImageRelation(): void
+    {
+        $this->delete();
+    }
 }

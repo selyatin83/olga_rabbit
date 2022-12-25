@@ -4,10 +4,19 @@ declare(strict_types=1);
 
 namespace omarinina\domain\models\ads;
 
+use omarinina\application\services\category\interfaces\AdCategoryUpdateInterface;
+use omarinina\application\services\image\AdImageDeleteService;
+use omarinina\application\services\image\interfaces\AdImageAddInterface;
+use omarinina\application\services\image\interfaces\ImageParseInterface;
+use omarinina\application\services\image\interfaces\ImageSaveInterface;
+use omarinina\infrastructure\models\forms\AdCreateForm;
+use Throwable;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use omarinina\domain\models\Users;
+use yii\web\ServerErrorHttpException;
 
 /**
  * This is the model class for table "ads".
@@ -27,6 +36,7 @@ use omarinina\domain\models\Users;
  * @property AdTypes $type
  * @property AdCategories[] $adCategories
  * @property Images[] $images
+ * @property AdsToImages[] $adsToImages
  */
 class Ads extends ActiveRecord
 {
@@ -135,5 +145,157 @@ class Ads extends ActiveRecord
     {
         return $this->hasMany(Images::class, ['id' => 'imageId'])
             ->viaTable('adsToImages', ['adId' => 'id']);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFirstImage() : ?string
+    {
+        return array_key_exists(0, $this->images) ?
+            $this->images[0]->imageSrc :
+            null;
+    }
+
+    /**
+     * Gets query for [[AdsToCategories]].
+     *
+     * @return ActiveQuery
+     */
+    public function getAdsToImages(): ActiveQuery
+    {
+        return $this->hasMany(AdsToImages::class, ['adId' => 'id']);
+    }
+
+    /**
+     * @param AdCreateForm $form
+     * @return $this
+     * @throws InvalidConfigException
+     * @throws ServerErrorHttpException
+     * @throws Throwable
+     * @throws \yii\db\Exception
+     * @throws \yii\db\StaleObjectException
+     * @throws \yii\di\NotInstantiableException
+     */
+    public function updateAd(AdCreateForm $form): Ads
+    {
+        $imageParse = Yii::$container->get(ImageParseInterface::class);
+        $imageSave = Yii::$container->get(ImageSaveInterface::class);
+        $adCategoriesUpdate = Yii::$container->get(AdCategoryUpdateInterface::class);
+        $adImagesAdd = Yii::$container->get(AdImageAddInterface::class);
+
+        $transaction = Yii::$app->db->beginTransaction();
+        if (!$transaction) {
+            throw new ServerErrorHttpException(
+                'Service is not available, please, try later',
+                500
+            );
+        }
+
+        try {
+            if ($this->name !== $form->name) {
+                $this->name = $form->name;
+            }
+
+            if ($this->description !== $form->description) {
+                $this->description = $form->description;
+            }
+
+            if ($this->price !== $form->price) {
+                $this->price = $form->price;
+            }
+
+            if ($this->typeId !== $form->typeId) {
+                $this->typeId = $form->typeId;
+            }
+
+            if ($this->email !== $form->email) {
+                $this->email = mb_strtolower($form->email);
+            }
+
+            $this->save(false);
+
+            if ($form->images) {
+                $imagePaths = [];
+                $previousImages = $this->images ?? null;
+                $imageRelations = $this->adsToImages ?? null;
+
+                foreach ($imageRelations as $imageRelation) {
+                    $imageRelation->deleteImageRelation();
+                }
+
+                foreach ($previousImages as $previousImage) {
+                    $imagePaths[] = Yii::$app->basePath . '/web/' . $previousImage->imageSrc;
+                    $previousImage->deleteImage();
+                }
+
+                $images = [];
+                foreach ($form->images as $image) {
+                    $imageSrc = $imageParse->parseImage($image, false);
+                    $images[] = $imageSave->saveNewImage($imageSrc);
+                }
+                $adImagesAdd->addAdImages($images, $this->id);
+            }
+
+            $adCategoriesUpdate->updateAdCategories($this, $form->categories);
+
+            $transaction->commit();
+
+            AdImageDeleteService::deleteAdImages($imagePaths ?? []);
+        } catch (Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     * @throws Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteAd(): void
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        if (!$transaction) {
+            throw new ServerErrorHttpException(
+                'Service is not available, please, try later',
+                500
+            );
+        }
+
+        $images = $this->images ?? null;
+        $imageRelations = $this->adsToImages ?? null;
+        $comments = $this->comments ?? null;
+        $imagePaths = [];
+
+        try {
+            foreach ($imageRelations as $imageRelation) {
+                $imageRelation->deleteImageRelation();
+            }
+
+            foreach ($images as $image) {
+                $imagePaths[] = Yii::$app->basePath . '/web/' . $image->imageSrc;
+                $image->deleteImage();
+            }
+
+            foreach ($this->adsToCategories as $category) {
+                $category->deleteCategory();
+            }
+
+            foreach ($comments as $comment) {
+                $comment->deleteComment();
+            }
+
+            $this->delete();
+
+            $transaction->commit();
+
+            AdImageDeleteService::deleteAdImages($imagePaths ?? []);
+        } catch (Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
     }
 }

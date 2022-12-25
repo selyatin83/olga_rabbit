@@ -9,17 +9,24 @@ use omarinina\application\factories\ad\dto\NewCommentDto;
 use omarinina\application\factories\ad\interfaces\AdFactoryInterface;
 use omarinina\application\factories\ad\interfaces\CommentFactoryInterface;
 use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
+use omarinina\application\services\image\interfaces\ImageParseInterface;
 use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
 use omarinina\domain\models\ads\AdTypes;
 use omarinina\infrastructure\models\forms\AdCreateForm;
+use omarinina\infrastructure\models\forms\AdEditForm;
 use omarinina\infrastructure\models\forms\CommentCreateForm;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\data\Pagination;
+use yii\db\Exception;
+use yii\db\StaleObjectException;
+use yii\di\NotInstantiableException;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
 class OffersController extends Controller
@@ -32,6 +39,7 @@ class OffersController extends Controller
 
     /** @var FilterAdsGetInterface */
     private FilterAdsGetInterface $filterAds;
+
 
     public function __construct(
         $id,
@@ -65,9 +73,44 @@ class OffersController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'actions' => ['edit'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['edit'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            $currentUser = Yii::$app->user->id;
+                            $adUser = $this->findModel(Yii::$app->request->get('id'))->author;
+                            return $currentUser === $adUser;
+                        }
+                    ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param $id
+     * @return Ads
+     * @throws NotFoundHttpException
+     */
+    protected function findModel($id): Ads
+    {
+        /** @var Ads $model */
+        $model = Ads::find()
+            ->where(['id' => $id])
+            ->with('images', 'adsToCategories', 'adsToImages')
+            ->one();
+
+        if ($model === null) {
+            throw new NotFoundHttpException('The requested page does not exist.', 404);
+        }
+
+        return $model;
     }
 
     /**
@@ -85,15 +128,17 @@ class OffersController extends Controller
             $adCreateForm->images = UploadedFile::getInstances($adCreateForm, 'images');
 
             if ($adCreateForm->validate()) {
-                $this->adFactory->createNewAd(new NewAdDto($adCreateForm, $author));
-                return $this->goHome();
+                $newAd = $this->adFactory->createNewAd(new NewAdDto($adCreateForm, $author));
+
+                return $this->redirect(['view', 'id' => $newAd->id]);
             }
         }
 
         return $this->render('add', [
             'model' => $adCreateForm,
             'categories' => $categories,
-            'types' => $types
+            'types' => $types,
+            'currentAd' => null
         ]);
     }
 
@@ -107,7 +152,7 @@ class OffersController extends Controller
         $currentAd = Ads::findOne($id);
 
         if (!$currentAd) {
-            throw new NotFoundHttpException('Task is not found', 404);
+            throw new NotFoundHttpException('Ad is not found', 404);
         }
 
         $commentForm = new CommentCreateForm();
@@ -131,6 +176,11 @@ class OffersController extends Controller
         ]);
     }
 
+    /**
+     * @param int $categoryId
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionCategory(int $categoryId)
     {
         $currentCategory = AdCategories::findOne($categoryId);
@@ -159,6 +209,53 @@ class OffersController extends Controller
             'categoryAds' => $categoryAdsWithPagination,
             'currentCategory' => $currentCategory,
             'pagination' => $pagination
+        ]);
+    }
+
+    /**
+     * @param int $id
+     * @return Response|string
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws NotFoundHttpException
+     * @throws NotInstantiableException
+     * @throws ServerErrorHttpException
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public function actionEdit(int $id): Response|string
+    {
+        $currentAd = $this->findModel($id);
+
+        $currentUser = Yii::$app->user->id;
+        $adUser = $currentAd->author;
+
+        if ($currentUser !== $adUser) {
+            throw new NotFoundHttpException('You cannot change this task', 403);
+        }
+
+        $categories = AdCategories::find()->all();
+        $types = AdTypes::find()->all();
+        $adEditForm = new AdEditForm();
+
+        if (Yii::$app->request->getIsPost()) {
+            $adEditForm->load(Yii::$app->request->post());
+            if ($adEditForm->images) {
+                $adEditForm->images = UploadedFile::getInstances($adEditForm, 'images');
+            }
+
+            if ($adEditForm->validate()) {
+                $currentAd->updateAd($adEditForm);
+
+                return $this->redirect(['view', 'id' => $currentAd->id]);
+            }
+        }
+
+        return $this->render('add', [
+            'model' => $adEditForm,
+            'categories' => $categories,
+            'types' => $types,
+            'currentAd' => $currentAd
         ]);
     }
 }

@@ -70,7 +70,7 @@ $config = [
                 'offers/<id:\d+>' => 'offers/view',
                 'offers/category/<categoryId:\d+>/page/<page:\d+>' => 'offers/category',
                 'offers/category/<categoryId:\d+>' => 'offers/category',
-
+                'offers/edit/<id:\d+>' => 'offers/edit',
             ],
         ],
     ],

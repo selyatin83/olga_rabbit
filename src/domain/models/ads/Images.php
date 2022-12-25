@@ -68,4 +68,14 @@ class Images extends \yii\db\ActiveRecord
         return $this->hasMany(Ads::class, ['id' => 'adId'])
             ->viaTable('adsToImages', ['imageId' => 'id']);
     }
+
+    /**
+     * @return void
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteImage(): void
+    {
+        $this->delete();
+    }
 }
