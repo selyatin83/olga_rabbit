@@ -30,7 +30,7 @@ class RegistrationForm extends Model
     {
         return [
             [['name', 'lastName', 'email', 'password', 'repeatedPassword', 'avatar'], 'required'],
-            [['name', 'lastName'], 'match', 'pattern' => '/^[A-Za-zА-Яа-яЁё]{2,50}$/i'],
+            [['name', 'lastName'], 'match', 'pattern' => '/^[A-Za-zА-Яа-яЁё\s]{2,50}$/u'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => Users::class, 'message' => 'Пользователь с таким e-mail уже существует'],
             ['password', 'string', 'min' => 6],
@@ -38,6 +38,7 @@ class RegistrationForm extends Model
             ['avatar', 'image', 'extensions' => 'png, jpg', 'maxSize' => 5 * 1024 * 1024],
         ];
     }
+
     public function attributeLabels(): array
     {
         return [

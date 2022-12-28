@@ -7,6 +7,7 @@ namespace app\controllers;
 use omarinina\application\factories\user\dto\NewUserDto;
 use omarinina\application\factories\user\interfaces\UserFactoryInterface;
 use omarinina\infrastructure\models\forms\RegistrationForm;
+use omarinina\infrastructure\models\forms\RegistrationVkForm;
 use yii\web\Controller;
 use Yii;
 use yii\web\Response;
@@ -27,20 +28,31 @@ class RegisterController extends Controller
         parent::__construct($id, $module, $config);
     }
 
-    public function actionIndex(): string|Response
+    public function actionIndex(?array $userData = null): string|Response
     {
-        $registrationForm = new RegistrationForm();
+        $registrationForm = $userData ? new RegistrationVkForm() : new RegistrationForm();
 
         if (Yii::$app->request->getIsPost()) {
             $registrationForm->load(Yii::$app->request->post());
             $registrationForm->avatar = UploadedFile::getInstance($registrationForm, 'avatar');
 
             if ($registrationForm->validate()) {
-                $this->userFactory->createNewUser(new NewUserDto($registrationForm));
-                return $this->redirect(['login/index']);
+                $newUser = $this->userFactory->createNewUser(
+                    new NewUserDto(
+                        $registrationForm,
+                        $userData['id'] ?? null,
+                        $userData['photo'] ?? null
+                    )
+                );
+                return $userData
+                    ? $this->redirect(['auth/login', 'userId' => $newUser->id])
+                    : $this->redirect(['login/index']);
             }
         }
 
-        return $this->render('index', ['model' => $registrationForm]);
+        return $this->render('index', [
+            'model' => $registrationForm,
+            'userData' => $userData
+            ]);
     }
 }

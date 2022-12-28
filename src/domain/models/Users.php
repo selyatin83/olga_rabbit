@@ -106,4 +106,14 @@ class Users extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Comments::class, ['author' => 'id']);
     }
+
+    /**
+     * @param int $vkId
+     * @return bool
+     */
+    public function addVkId(string $vkId): bool
+    {
+        $this->vkId = (int)$vkId;
+        return $this->save(false);
+    }
 }

@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use app\widgets\VkButtonWidget;
 use omarinina\infrastructure\models\forms\LoginForm;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
@@ -25,7 +27,7 @@ use yii\widgets\ActiveForm;
     ])
     ?>
         <div class="login__title">
-            <?php echo Html::a('Регистрация', 'register/index', ['class'=>'login__link']) ?>
+            <?php echo Html::a('Регистрация', Url::to(['register/index']), ['class'=>'login__link']) ?>
             <h2>Вход</h2>
         </div>
         <?= $form->field($model, 'email', [
@@ -39,7 +41,7 @@ use yii\widgets\ActiveForm;
 
         <?php
         echo Html::submitButton('Войти', ['class' => 'login__button btn btn--medium js-button']);
-        echo Html::a('Войти через <span class="icon icon--vk"></span>', '#', ['class'=>'btn btn--small btn--flex btn--white']);
+        echo VkButtonWidget::widget();
 
         ActiveForm::end() ?>
 </section>

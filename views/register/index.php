@@ -2,20 +2,37 @@
 
 declare(strict_types=1);
 
+use app\widgets\VkButtonWidget;
 use omarinina\infrastructure\models\forms\RegistrationForm;
+use omarinina\infrastructure\models\forms\RegistrationVkForm;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var RegistrationForm $model */
+/** @var RegistrationForm|RegistrationVkForm $model */
+/** @var null|array $userData */
+
+//var_dump($userData);
+//die();
+
+if (!$userData) {
+    $formName = RegistrationForm::class;
+    $avatar = null;
+} else {
+    $formName = RegistrationVkForm::class;
+    $model->name = $userData['first_name'] ?? '';
+    $model->lastName = $userData['last_name'] ?? '';
+    $model->email = $userData['email'] ?? '';
+    $avatar = $userData['photo'] ?? '';
+}
 
 ?>
 
 <section class="sign-up">
     <h1 class="visually-hidden">Регистрация</h1>
         <?php $form = ActiveForm::begin([
-            'id' => RegistrationForm::class,
+            'id' => $formName,
             'options' => [
                 'class' => 'sign-up__form form'
             ],
@@ -25,13 +42,25 @@ use yii\helpers\Url;
                 'errorOptions' => ['tag' => 'span', 'class' => 'error__list', 'style' => 'display: flex']
             ]
         ])
-        ?>
+?>
         <div class="sign-up__title">
             <h2>Регистрация</h2>
             <?php echo Html::a('Вход', Url::to(['login/index']), ['class'=>'sign-up__link']) ?>
         </div>
-        <div class="sign-up__avatar-container js-preview-container">
-            <div class="sign-up__avatar js-preview"></div>
+        <div class="sign-up__avatar-container js-preview-container
+        <?php if ($avatar) :
+            ?> uploaded <?php
+        endif; ?>
+        ">
+            <div class="sign-up__avatar js-preview">
+                <?php if ($avatar) : ?>
+                    <img
+                            src="<?= $avatar ?>"
+                            srcset="<?= $avatar ?> 2x"
+                            alt=""
+                    >
+                <?php endif; ?>
+            </div>
             <div class="sign-up__field-avatar">
                 <?=$form->field($model, 'avatar', ['template' => "{input}\n{error}"])
                     ->fileInput([
@@ -57,6 +86,7 @@ use yii\helpers\Url;
                 'options' => [
                         'class' => 'form__field sign-up__field'
                 ]])->textInput() ?>
+    <?php if (!$userData) : ?>
         <?= $form->field($model, 'password', [
                 'options' => [
                         'class' => 'form__field sign-up__field'
@@ -65,10 +95,10 @@ use yii\helpers\Url;
                 'options' => [
                         'class' => 'form__field sign-up__field'
                 ]])->passwordInput() ?>
+    <?php endif; ?>
 
         <?php
             echo Html::submitButton('Создать аккаунт', ['class' => 'sign-up__button btn btn--medium js-button']);
-            echo Html::a('Войти через <span class="icon icon--vk"></span>', '#', ['class'=>'btn btn--small btn--flex btn--white']);
-
+            echo VkButtonWidget::widget();
             ActiveForm::end() ?>
 </section>

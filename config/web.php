@@ -1,5 +1,7 @@
 <?php
 
+use yii\authclient\clients\VKontakte;
+use yii\authclient\Collection;
 use wapmorgan\yii2inflection\Inflection;
 use yii\sphinx\Connection;
 use yii\debug\panels\DbPanel;
@@ -7,6 +9,7 @@ use yii\debug\Module;
 use yii\log\FileTarget;
 use yii\caching\FileCache;
 use omarinina\infrastructure\modules\Bootstrap;
+use omarinina\infrastructure\constants\KeysConstants;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -29,6 +32,16 @@ $config = [
             'dsn' => 'mysql:host=sphinxsearch;port=9306;',
             'username' => 'root',
             'password' => 'root_password',
+        ],
+        'authClientCollection' => [
+            'class' => Collection::class,
+            'clients' => [
+                'vkontakte' => [
+                    'class' => VKontakte::class,
+                    'clientId' => KeysConstants::VK_CLIENT_ID,
+                    'clientSecret' => KeysConstants::VK_CLIENT_KEY,
+                ],
+            ],
         ],
         'inflection' => [
             'class' => Inflection::class

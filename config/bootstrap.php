@@ -45,3 +45,8 @@ Yii::$container->set(
     \omarinina\application\services\category\interfaces\AdCategoryUpdateInterface::class,
     \omarinina\application\services\category\AdCategoryUpdateService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\user\interfaces\UserAuthVkInterface::class,
+    \omarinina\application\services\user\UserAuthVkService::class
+);

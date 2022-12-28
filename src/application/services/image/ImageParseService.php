@@ -26,4 +26,21 @@ class ImageParseService implements ImageParseInterface
 
         return $uploadPartPath . $name;
     }
+
+    public function parseVkAvatar(string $urlAvatarVk): string
+    {
+        $url = $urlAvatarVk;
+        $fileName = Yii::$app->params['pathAvatar'] . uniqid('upload', true) . '.' . 'jpg';
+
+        $uploadPath = Yii::getAlias('@webroot') . Yii::$app->params['pathAvatar'];
+
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        $fullPath = Yii::getAlias('@webroot') . $fileName;
+        file_put_contents($fullPath, file_get_contents($url));
+
+        return $fileName;
+    }
 }
