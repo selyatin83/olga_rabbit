@@ -3,13 +3,10 @@
 namespace omarinina\application\services\ad;
 
 use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
-use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
-use Yii;
-use yii\data\Pagination;
+use omarinina\domain\models\Users;
 use yii\db\ActiveQuery;
 use yii\sphinx\Query;
-use yii\web\NotFoundHttpException;
 
 class FilterAdsGetService implements FilterAdsGetInterface
 {
@@ -48,5 +45,20 @@ class FilterAdsGetService implements FilterAdsGetInterface
             ->joinWith('adsToCategories')
             ->where(['categoryId' => $categoryId])
             ->orderBy('createAt DESC');
+    }
+
+    /**
+     * @param Users $user
+     * @return Ads[]
+     */
+    public function getUserAdsWithComments(Users $user): array
+    {
+        return $user
+            ->getAds()
+            ->joinWith(['comments'])
+            ->groupBy(['ads.id'])
+            ->having('MAX(comments.id) > 0')
+            ->orderBy(['MAX(comments.createAt)' => SORT_DESC])
+            ->all();
     }
 }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
+use omarinina\application\factories\ad\interfaces\AdFactoryInterface;
+use omarinina\application\factories\ad\interfaces\CommentFactoryInterface;
+use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
 use omarinina\domain\models\ads\Ads;
 use omarinina\domain\models\Users;
 use Yii;
@@ -12,6 +15,19 @@ use yii\web\Response;
 
 class MyController extends SecurityController
 {
+    /** @var FilterAdsGetInterface */
+    private FilterAdsGetInterface $filterAds;
+
+    public function __construct(
+        $id,
+        $module,
+        FilterAdsGetInterface $filterAds,
+        $config = []
+    ) {
+        $this->filterAds = $filterAds;
+        parent::__construct($id, $module, $config);
+    }
+
     public function behaviors(): array
     {
         $rules = parent::behaviors();
@@ -74,5 +90,16 @@ class MyController extends SecurityController
         $deletedAd->deleteAd();
 
         return $this->redirect('index');
+    }
+
+    public function actionComments()
+    {
+        /** @var Users $user */
+        $user = Yii::$app->user->identity;
+        $adsWithComments = $this->filterAds->getUserAdsWithComments($user);
+
+        return $this->render('comments', [
+            'adsWithComments' => $adsWithComments
+        ]);
     }
 }

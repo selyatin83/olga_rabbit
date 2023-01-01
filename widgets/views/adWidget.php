@@ -11,6 +11,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 if (is_array($ad)) {
+    /** @var AdCategories[] $categories */
     $categories = AdCategories::find()->where(['id' => $ad['categories']])->all();
     if ($ad['images']) {
         $image = Images::findOne($ad['images'][0]);
@@ -32,7 +33,7 @@ if (is_array($ad)) {
             <?php if ($categories) : ?>
             <div class="ticket-card__categories">
                 <?php foreach ($categories as $category) : ?>
-                <a href="#"><?= $category->name ?></a>
+                <a href="<?= Url::to(['offers/category', 'categoryId' => $category->id]) ?>"><?= $category->name ?></a>
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
@@ -60,7 +61,9 @@ if (is_array($ad)) {
             <span class="ticket-card__label"><?= $ad->type->name ?></span>
             <div class="ticket-card__categories">
                 <?php foreach ($ad->adCategories as $category) : ?>
-                    <a href="#"><?= $category->name ?></a>
+                    <a href="<?= Url::to(['offers/category', 'categoryId' => $category->id]) ?>">
+                        <?= $category->name ?>
+                    </a>
                 <?php endforeach; ?>
             </div>
             <div class="ticket-card__header">

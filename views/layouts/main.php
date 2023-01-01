@@ -46,7 +46,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             echo Menu::widget([
                 'items' => [
                     ['label' => 'Публикации', 'url' => ['my/index']],
-                    ['label' => 'Комментарии', 'url' => ['/html/comments.html']],
+                    ['label' => 'Комментарии', 'url' => ['my/comments']],
                 ],
                 'options' => [
                     'class' => 'header__list'
