@@ -10,6 +10,7 @@ declare(strict_types=1);
 //die();
 
 use omarinina\domain\models\ads\Ads;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
@@ -49,7 +50,17 @@ use yii\helpers\Url;
                                     <div class="comment-card__content">
                                         <p><?= $comment->text ?></p>
                                     </div>
-                                    <button class="comment-card__delete js-delete" type="button">Удалить</button>
+                                    <?php
+                                    echo Html::a(
+                                        'Удалить',
+                                        Url::to([
+                                                    'my/delete-comment',
+                                                'id' => $ad->id,
+                                                'commentId' => $comment->id
+                                            ]),
+                                        ['class'=>'comment-card__delete js-delete']
+                                    );
+                                    ?>
                                 </div>
                             </li>
                         <?php endforeach; ?>

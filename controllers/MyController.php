@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\factories\ad\interfaces\AdFactoryInterface;
-use omarinina\application\factories\ad\interfaces\CommentFactoryInterface;
 use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
 use omarinina\domain\models\ads\Ads;
+use omarinina\domain\models\ads\Comments;
 use omarinina\domain\models\Users;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -32,8 +31,8 @@ class MyController extends SecurityController
     {
         $rules = parent::behaviors();
         $rule = [
-            'allow' => false,
-            'actions' => ['delete'],
+            'allow' => true,
+            'actions' => ['delete', 'delete-comment'],
             'matchCallback' => function () {
                 $currentUser = Yii::$app->user->id;
                 $adUser = $this->findModel(Yii::$app->request->get('id'))->author;
@@ -92,7 +91,10 @@ class MyController extends SecurityController
         return $this->redirect('index');
     }
 
-    public function actionComments()
+    /**
+     * @return string
+     */
+    public function actionComments(): string
     {
         /** @var Users $user */
         $user = Yii::$app->user->identity;
@@ -101,5 +103,26 @@ class MyController extends SecurityController
         return $this->render('comments', [
             'adsWithComments' => $adsWithComments
         ]);
+    }
+
+    /**
+     * @param int $id
+     * @param int $commentId
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function actionDeleteComment(int $id, int $commentId): Response
+    {
+        $comment = Comments::findOne($commentId);
+
+        if (!$comment) {
+            throw new NotFoundHttpException('Comment is not found', 404);
+        }
+
+        $comment->deleteComment();
+
+        return $this->redirect('comments');
     }
 }
