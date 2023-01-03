@@ -37,9 +37,7 @@ $defaultCss = Yii::$app->request->url === '/' ?
     'categories-list__item category-tile--default' :
     'categories-list__item';
 
-?>
 
-<?php
     echo Menu::widget([
         'encodeLabels' => false,
         'items' =>getCategoryItems($categories),
@@ -51,4 +49,3 @@ $defaultCss = Yii::$app->request->url === '/' ?
         'itemOptions' => [
             'class' => $defaultCss],
     ]);
-?>

@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
+use DateTime;
+use Kreait\Firebase\Contract\Database;
+use Kreait\Firebase\Exception\DatabaseException;
+use omarinina\application\services\realtimeDatabase\RealtimeDatabaseInitializeService;
 use omarinina\application\factories\ad\dto\NewAdDto;
 use omarinina\application\factories\ad\dto\NewCommentDto;
 use omarinina\application\factories\ad\interfaces\AdFactoryInterface;
 use omarinina\application\factories\ad\interfaces\CommentFactoryInterface;
 use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
-use omarinina\application\services\image\interfaces\ImageParseInterface;
 use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
 use omarinina\domain\models\ads\AdTypes;
+use omarinina\domain\models\Users;
 use omarinina\infrastructure\models\forms\AdCreateForm;
 use omarinina\infrastructure\models\forms\AdEditForm;
 use omarinina\infrastructure\models\forms\CommentCreateForm;
@@ -28,6 +32,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
+use yii\mail\BaseMailer;
 
 class OffersController extends Controller
 {
@@ -40,6 +45,8 @@ class OffersController extends Controller
     /** @var FilterAdsGetInterface */
     private FilterAdsGetInterface $filterAds;
 
+    /** @var Database */
+    private Database $database;
 
     public function __construct(
         $id,
@@ -52,6 +59,7 @@ class OffersController extends Controller
         $this->adFactory = $adFactory;
         $this->commentFactory = $commentFactory;
         $this->filterAds = $filterAds;
+        $this->database = RealtimeDatabaseInitializeService::intializeRealtimeDatabase();
         parent::__construct($id, $module, $config);
     }
 
@@ -66,15 +74,10 @@ class OffersController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['add'],
+                'only' => ['add', 'edit', 'chat'],
                 'rules' => [
                     [
-                        'actions' => ['add'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['edit'],
+                        'actions' => ['add', 'chat'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -111,6 +114,16 @@ class OffersController extends Controller
         }
 
         return $model;
+    }
+
+    /**
+     * @param string $reference
+     * @return array
+     * @throws DatabaseException
+     */
+    protected function getChatsForAuthor(string $reference): array
+    {
+        return $this->database->getReference($reference)->getValue() ?? [];
     }
 
     /**
@@ -158,6 +171,9 @@ class OffersController extends Controller
         $commentForm = new CommentCreateForm();
         $currentUser = Yii::$app->user->id;
 
+        $isAuthor = $currentUser === $currentAd->author;
+        $referenceAuthor = "ads/{$currentAd->id}/rooms";
+
         if (Yii::$app->request->getIsPost()) {
             $commentForm->load(Yii::$app->request->post());
             if ($commentForm->validate()) {
@@ -172,7 +188,8 @@ class OffersController extends Controller
 
         return $this->render('view', [
             'currentAd' => $currentAd,
-            'model' => $commentForm
+            'model' => $commentForm,
+            'authorChats' => $isAuthor ? $this->getChatsForAuthor($referenceAuthor) : []
         ]);
     }
 
@@ -257,5 +274,59 @@ class OffersController extends Controller
             'types' => $types,
             'currentAd' => $currentAd
         ]);
+    }
+
+    /**
+     * @return void
+     * @throws DatabaseException
+     * @throws NotFoundHttpException
+     */
+    public function actionAddMessageToChat(): void
+    {
+        $currentUserId = Yii::$app->user->id;
+        $currentTime = Yii::$app->formatter->asTimestamp(new DateTime('now'));
+
+        $request = Yii::$app->request;
+        $message = $request->post('message', $request->get('message'));
+        $chatRef = $request->post('reference', $request->get('reference'));
+
+        if ($message && $chatRef) {
+            $this->database->getReference($chatRef)->push([
+                'userId' => $currentUserId,
+                'text' => $message,
+                'createAt' => $currentTime
+            ]);
+        }
+
+        $currentAdId = (int)$request->post('currentAdId', $request->get('currentAdId'));
+
+        $currentAd = $this->findModel($currentAdId);
+
+        $author = $currentAd->author;
+
+        if ($currentUserId === $author) {
+            $receiverId = (int)$request->post('receiverId', $request->get('receiverId'));
+            $receiver = Users::findOne($receiverId);
+
+            if (!$receiver) {
+                throw new NotFoundHttpException('User is not found', 404);
+            }
+        } else {
+            $receiver = $currentAd->authorUser;
+        }
+
+        $currentUser = Users::findOne($currentUserId);
+
+        Yii::$app->mailer->compose('chatmessage', [
+            'currentAd' => $currentAd,
+            'sender' => $currentUser,
+            'time' => $currentTime,
+            'message' => $message,
+            'html' => 'layouts/html'
+        ])
+            ->setFrom(Yii::$app->params['senderEmail'])
+            ->setTo($receiver->email)
+            ->setSubject('У вас новое сообщение в чате')
+            ->send();
     }
 }

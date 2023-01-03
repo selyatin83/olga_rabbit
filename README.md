@@ -144,9 +144,15 @@ We work with Sphinx as docker container. You should do next step to start it loc
 
 If you have already started your another containers, start docker containers with:
 
-    docker-compose up
+    docker-compose up -d
    
 If your containers haven't started yet please before start containers without sphinx. It needs to have connection to DB before starting.
+
+### Check mail-sending with Mailhog
+
+We need to send mails to user who has new message in chat of some ad
+
+Just open `127.0.0.1:8025` and send any message in any chat and see result.
 
 
 

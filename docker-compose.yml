@@ -32,3 +32,10 @@ services:
     volumes:
       - ./docker/sphinx/sphinx.conf:/etc/sphinxsearch/sphinx.conf
       - ./docker/sphinx/data:/var/lib/sphinxsearch/data
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - '8025:8025'
+      - '1025:1025'
+    restart: always

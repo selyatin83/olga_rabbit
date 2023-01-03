@@ -39,3 +39,7 @@ docker/data
 docker/sphinx/data
 
 web/uploads
+
+firebaseCredentials.json
+KeysConstants.php
+FirebaseConfigForJS.php
