@@ -59,6 +59,8 @@ class SiteController extends Controller
      */
     public function actions()
     {
+        $this->layout = 'error';
+
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
@@ -77,6 +79,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $this->layout = 'main';
+
         $newAds = $this->filterAds->getNewAds();
         $popularAds = $this->filterAds->getPopularAds();
         $categories = AdCategories::find()->joinWith(['adsToCategories'])->where(['not', ['adId' => null]])->all();
