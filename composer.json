@@ -27,7 +27,10 @@
         "yiisoft/yii2-sphinx": "^2.0",
         "wapmorgan/yii2-inflection": "^1.0",
         "yiisoft/yii2-authclient": "^2.2",
-        "kreait/firebase-php": "^7.0"
+        "kreait/firebase-php": "^7.0",
+        "yiisoft/yii2-queue": "^2.3",
+        "php-amqplib/php-amqplib": "^3.5",
+        "enqueue/amqp-lib": "^0.10.9"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

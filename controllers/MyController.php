@@ -8,6 +8,7 @@ use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
 use omarinina\domain\models\ads\Ads;
 use omarinina\domain\models\ads\Comments;
 use omarinina\domain\models\Users;
+use omarinina\infrastructure\jobs\EmailJob;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;

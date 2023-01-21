@@ -5,8 +5,10 @@ namespace app\controllers;
 use omarinina\application\services\ad\interfaces\FilterAdsGetInterface;
 use omarinina\domain\models\ads\AdCategories;
 use omarinina\domain\models\ads\Ads;
+use omarinina\infrastructure\jobs\EmailJob;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -152,5 +154,11 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionTest()
+    {
+        $emailJob = new EmailJob('selyatin83@mail.ru', 'dalkdalsdad');
+        VarDumper::dump(Yii::$app->emailQueue->push($emailJob));
     }
 }

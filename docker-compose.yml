@@ -5,14 +5,23 @@ volumes:
 
 services:
   php:
-    image: yiisoftware/yii2-php:8.1-apache
+    build: docker/php
+    container_name: fpm.php
     volumes:
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      - ./:/app:delegated
-    ports:
-      - '8000:80'
+      - ./:/app
     depends_on:
       - db
+
+  nginx:
+    build: docker/nginx
+    container_name: nginx
+    depends_on:
+      - php
+    volumes:
+      - ./:/app
+      - ./docker/nginx/vhosts/rest.conf:/etc/nginx/sites-enabled/default
+    ports:
+      - "8000:80"
 
   db:
     image: mysql:8.0.31
@@ -25,17 +34,30 @@ services:
     volumes:
       - ./docker/data/mysql:/var/lib/mysql
 
-  sphinxsearch:
-    image: sphinx:latest
-    build:
-      context: docker/sphinx
-    volumes:
-      - ./docker/sphinx/sphinx.conf:/etc/sphinxsearch/sphinx.conf
-      - ./docker/sphinx/data:/var/lib/sphinxsearch/data
-
-  mailhog:
-    image: mailhog/mailhog
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: rabbit
     ports:
-      - '8025:8025'
-      - '1025:1025'
-    restart: always
+      - "15672:15672"
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "25672:25672"
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+
+#  sphinxsearch:
+#    image: sphinx:latest
+#    build:
+#      context: docker/sphinx
+#    volumes:
+#      - ./docker/sphinx/sphinx.conf:/etc/sphinxsearch/sphinx.conf
+#      - ./docker/sphinx/data:/var/lib/sphinxsearch/data
+
+#  mailhog:
+#    image: mailhog/mailhog
+#    ports:
+#      - '8025:8025'
+#      - '1025:1025'
+#    restart: always

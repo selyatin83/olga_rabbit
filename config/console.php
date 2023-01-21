@@ -8,7 +8,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'emailQueue'],
     'controllerNamespace' => 'app\commands',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -16,6 +16,19 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'emailQueue' => [
+            'class' => \yii\queue\amqp_interop\Queue::class,
+            'as log' => \yii\queue\LogBehavior::class,
+            'ttr' => 3 * 60,
+            'attempts' => 1,
+            'queueName' => 'email-queue',
+            'exchangeName' => 'email-queue',
+            'driver' => \yii\queue\amqp_interop\Queue::ENQUEUE_AMQP_LIB,
+            'dsn' => "amqp://root:root@rabbit:5672",
+            'connectionTimeout' => 60,
+            'heartbeat' => 60,
+            'vhost' => '/'
+        ],
         'sphinx' => [
             'class' => Connection::class,
             'dsn' => 'mysql:host=127.0.0.1;port=9306;dbname=buyAndSell',
@@ -29,7 +42,7 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info'],
                 ],
             ],
         ],

@@ -20,7 +20,8 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',
-        Bootstrap::class
+        Bootstrap::class,
+        'emailQueue'
     ],
     'homeUrl' => ['/'],
     'aliases' => [
@@ -28,6 +29,19 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        'emailQueue' => [
+            'class' => \yii\queue\amqp_interop\Queue::class,
+            'as log' => \yii\queue\LogBehavior::class,
+            'ttr' => 3 * 60,
+            'attempts' => 1,
+            'queueName' => 'email-queue',
+            'exchangeName' => 'email-queue',
+            'driver' => \yii\queue\amqp_interop\Queue::ENQUEUE_AMQP_LIB,
+            'dsn' => "amqp://root:root@rabbit:5672",
+            'connectionTimeout' => 60,
+            'heartbeat' => 60,
+            'vhost' => '/'
+        ],
         'sphinx' => [
             'class' => Connection::class,
             'dsn' => 'mysql:host=sphinxsearch;port=9306;',
@@ -90,6 +104,7 @@ $config = [
                 'offers/edit/<id:\d+>' => 'offers/edit',
             ],
         ],
+
     ],
     'params' => $params,
 ];
